@@ -16,10 +16,12 @@
     let toastTimer;
 
     /* ============================
-       DEMO VIDEO
-    ============================ */
+   DEMO VIDEOS
+============================ */
 
-    const demo = {
+const demoVideos = [
+
+    {
         id: "demo-1",
         username: "flcreator",
         displayName: "V-Tik creator",
@@ -33,7 +35,73 @@
         saved: false,
         src: "fik logogo (1).mp4",
         demo: true
-    };
+    },
+
+    {
+        id: "demo-2",
+        username: "musicstar",
+        displayName: "Music lover",
+        caption: "Enjoy the latest music vibes! 🎵🔥 #Music #Vibes",
+        topic: "Music",
+        likes: 2500,
+        comments: [],
+        views: "2.5K",
+        following: false,
+        liked: false,
+        saved: false,
+        src: "videos/music.mp4",
+        demo: true
+    },
+
+    {
+        id: "demo-3",
+        username: "gamerpro",
+        displayName: "Gaming creator",
+        caption: "Watch this amazing gaming moment! 🎮🔥 #Gaming",
+        topic: "Gaming",
+        likes: 980,
+        comments: [],
+        views: "980",
+        following: false,
+        liked: false,
+        saved: false,
+        src: "videos/gaming.mp4",
+        demo: true
+    },
+
+    {
+        id: "demo-4",
+        username: "trendking",
+        displayName: "Trending creator",
+        caption: "You won't believe what happens next! 😂🔥 #Trending",
+        topic: "Trending",
+        likes: 5400,
+        comments: [],
+        views: "5.4K",
+        following: false,
+        liked: false,
+        saved: false,
+        src: "videos/trending.mp4",
+        demo: true
+    },
+
+    {
+        id: "demo-5",
+        username: "sportszone",
+        displayName: "Sports creator",
+        caption: "Unbelievable football skills! ⚽🔥 #Football #Sports",
+        topic: "Trending",
+        likes: 3200,
+        comments: [],
+        views: "3.2K",
+        following: false,
+        liked: false,
+        saved: false,
+        src: "videos/football.mp4",
+        demo: true
+    }
+
+];
 
     /* ============================
        NOTIFICATION MESSAGE
