@@ -660,3 +660,25 @@
   render();
 
 })();
+// V-TIK PRO SCROLL BUTTONS
+
+const scrollUp = document.getElementById("scrollUp");
+const scrollDown = document.getElementById("scrollDown");
+
+if (scrollUp && scrollDown) {
+
+    scrollUp.addEventListener("click", () => {
+        window.scrollBy({
+            top: -window.innerHeight * 0.8,
+            behavior: "smooth"
+        });
+    });
+
+    scrollDown.addEventListener("click", () => {
+        window.scrollBy({
+            top: window.innerHeight * 0.8,
+            behavior: "smooth"
+        });
+    });
+
+}
