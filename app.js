@@ -3,7 +3,6 @@
     "use strict";
 
     const $ = id => document.getElementById(id);
-
     const feed = $("videoFeed");
 
     if (!feed) {
@@ -11,31 +10,80 @@
         return;
     }
 
-    /* =================================
-       USER AUTHENTICATION
-    ================================= */
+    /* ==================================
+       USER SESSION
+    ================================== */
 
-    let currentUser = null;
+    function getCurrentUser() {
+        try {
+            return JSON.parse(localStorage.getItem("loggedInUser") || "null");
+        } catch {
+            return null;
+        }
+    }
 
-    try {
-        currentUser = JSON.parse(
-            localStorage.getItem("loggedInUser") || "null"
+    let currentUser = getCurrentUser();
+
+    function isLoggedIn() {
+        currentUser = getCurrentUser();
+
+        return Boolean(
+            currentUser &&
+            currentUser.id &&
+            currentUser.username
         );
-    } catch (error) {
-        currentUser = null;
     }
 
-    if (!currentUser || !currentUser.id || !currentUser.username) {
-        window.location.href = "login.html";
-        return;
+    function requireLogin() {
+        if (isLoggedIn()) return true;
+
+        notify("Please log in to use this feature.");
+
+        // Change this path if your login page is in another folder.
+        window.location.href = "./login.html";
+
+        return false;
     }
+
+    function getUsername() {
+        return currentUser?.username || "Guest";
+    }
+
+    function getDisplayName() {
+        return currentUser?.displayName ||
+            currentUser?.username ||
+            "Guest";
+    }
+
+    function logout() {
+        if (!confirm("Are you sure you want to log out?")) return;
+
+        localStorage.removeItem("loggedInUser");
+
+        window.location.href = "./login.html";
+    }
+
+    ["logoutButton", "logoutBtn", "topLogout"].forEach(id => {
+        $(id)?.addEventListener("click", logout);
+    });
+
+    $("topAvatar")?.addEventListener("click", () => {
+        if (!requireLogin()) return;
+        window.location.href = "./accounts.html";
+    });
+
+    /* ==================================
+       STORAGE
+    ================================== */
 
     const DB_NAME = "vtik-pro-media";
     const STORE = "videos";
 
-    // Each account has separate interactions.
-    const INTERACTION_KEY =
-        "vtik-video-interactions-" + currentUser.id;
+    function interactionKey() {
+        return isLoggedIn()
+            ? "vtik-video-interactions-" + currentUser.id
+            : "vtik-video-interactions-guest";
+    }
 
     let videos = [];
     let activeCommentId = null;
@@ -45,41 +93,9 @@
     let userHasInteracted = false;
     let scrollTimer = null;
 
-    /* =================================
-       CURRENT USER
-    ================================= */
-
-    function getUsername() {
-        return currentUser.username;
-    }
-
-    function getDisplayName() {
-        return currentUser.displayName || currentUser.username;
-    }
-
-    function logout() {
-        if (!confirm("Are you sure you want to log out?")) {
-            return;
-        }
-
-        localStorage.removeItem("loggedInUser");
-
-        window.location.href = "login.html";
-    }
-
-    // Support different possible logout button IDs.
-    ["logoutButton", "logoutBtn", "topLogout"].forEach(id => {
-        $(id)?.addEventListener("click", logout);
-    });
-
-    // Clicking the avatar opens the account page.
-    $("topAvatar")?.addEventListener("click", () => {
-        window.location.href = "accounts.html";
-    });
-
-    /* =================================
+    /* ==================================
        DEMO VIDEOS
-    ================================= */
+    ================================== */
 
     const demoVideos = [
         {
@@ -144,36 +160,62 @@
         }
     ];
 
-    /* =================================
+    /* ==================================
        NOTIFICATIONS
-    ================================= */
+    ================================== */
 
     function notify(message) {
-        const el = $("toast");
+        const toast = $("toast");
 
-        if (!el) {
+        if (!toast) {
             console.log(message);
             return;
         }
 
-        el.textContent = message;
-        el.classList.add("show");
+        toast.textContent = message;
+        toast.classList.add("show");
 
         clearTimeout(toastTimer);
 
         toastTimer = setTimeout(() => {
-            el.classList.remove("show");
-        }, 2400);
+            toast.classList.remove("show");
+        }, 2500);
     }
 
-    /* =================================
-       INTERACTION STORAGE
-    ================================= */
+    /* ==================================
+       HTML SAFETY
+    ================================== */
+
+    function escapeHTML(value = "") {
+        return String(value).replace(/[&<>"']/g, char => ({
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;"
+        })[char]);
+    }
+
+    function formatLikes(number) {
+        if (number >= 1000000) {
+            return (number / 1000000).toFixed(1) + "M";
+        }
+
+        if (number >= 1000) {
+            return (number / 1000).toFixed(1) + "K";
+        }
+
+        return String(number);
+    }
+
+    /* ==================================
+       INTERACTIONS
+    ================================== */
 
     function getInteractions() {
         try {
             return JSON.parse(
-                localStorage.getItem(INTERACTION_KEY) || "{}"
+                localStorage.getItem(interactionKey()) || "{}"
             );
         } catch {
             return {};
@@ -195,12 +237,12 @@
 
         try {
             localStorage.setItem(
-                INTERACTION_KEY,
+                interactionKey(),
                 JSON.stringify(data)
             );
         } catch (error) {
             console.error(error);
-            notify("Storage is full. Changes may not be saved.");
+            notify("Could not save your changes.");
         }
     }
 
@@ -210,19 +252,19 @@
         videos.forEach(video => {
             const saved = data[video.id];
 
-            if (saved) {
-                video.liked = saved.liked ?? false;
-                video.saved = saved.saved ?? false;
-                video.following = saved.following ?? false;
-                video.likes = saved.likes ?? video.likes;
-                video.comments = saved.comments ?? video.comments;
-            }
+            if (!saved) return;
+
+            video.liked = saved.liked ?? false;
+            video.saved = saved.saved ?? false;
+            video.following = saved.following ?? false;
+            video.likes = saved.likes ?? video.likes;
+            video.comments = saved.comments ?? video.comments;
         });
     }
 
-    /* =================================
+    /* ==================================
        INDEXEDDB
-    ================================= */
+    ================================== */
 
     function openDB() {
         return new Promise((resolve, reject) => {
@@ -243,13 +285,8 @@
                 }
             };
 
-            request.onsuccess = () => {
-                resolve(request.result);
-            };
-
-            request.onerror = () => {
-                reject(request.error);
-            };
+            request.onsuccess = () => resolve(request.result);
+            request.onerror = () => reject(request.error);
         });
     }
 
@@ -298,35 +335,9 @@
     const removeUpload = id =>
         dbAction("readwrite", store => store.delete(id));
 
-    /* =================================
-       FORMATTING
-    ================================= */
-
-    function escapeHTML(value = "") {
-        return String(value).replace(/[&<>"']/g, char => ({
-            "&": "&amp;",
-            "<": "&lt;",
-            ">": "&gt;",
-            '"': "&quot;",
-            "'": "&#39;"
-        })[char]);
-    }
-
-    function formatLikes(number) {
-        if (number >= 1000000) {
-            return (number / 1000000).toFixed(1) + "M";
-        }
-
-        if (number >= 1000) {
-            return (number / 1000).toFixed(1) + "K";
-        }
-
-        return String(number);
-    }
-
-    /* =================================
-       FILTER VIDEOS
-    ================================= */
+    /* ==================================
+       VIDEO FILTERS
+    ================================== */
 
     function visibleVideos() {
         const query =
@@ -347,9 +358,9 @@
         }
 
         if (currentPage === "My Videos") {
-            list = list.filter(video =>
-                video.ownerId === currentUser.id
-            );
+            list = isLoggedIn()
+                ? list.filter(video => video.ownerId === currentUser.id)
+                : [];
         }
 
         if (["Trending", "Music", "Gaming"].includes(currentPage)) {
@@ -369,37 +380,28 @@
         return list;
     }
 
-    /* =================================
-       STOP ALL VIDEOS
-    ================================= */
+    /* ==================================
+       VIDEO PLAYBACK
+    ================================== */
 
     function stopAllVideos() {
         document.querySelectorAll(".video-stage video").forEach(video => {
             video.pause();
-
             video.closest(".video-stage")?.classList.add("paused");
         });
     }
 
     function stopOtherVideos(currentVideo) {
-        document.querySelectorAll(".video-stage video").forEach(other => {
-            if (other !== currentVideo) {
-                other.pause();
-
-                other.closest(".video-stage")
-                    ?.classList.add("paused");
+        document.querySelectorAll(".video-stage video").forEach(video => {
+            if (video !== currentVideo) {
+                video.pause();
+                video.closest(".video-stage")?.classList.add("paused");
             }
         });
     }
 
-    /* =================================
-       VIDEO PLAYBACK
-    ================================= */
-
     async function playVideo(video) {
         if (!video) return;
-
-        const stage = video.closest(".video-stage");
 
         stopOtherVideos(video);
 
@@ -408,23 +410,17 @@
 
         try {
             await video.play();
-
-            stage?.classList.remove("paused");
+            video.closest(".video-stage")?.classList.remove("paused");
         } catch (error) {
-            stage?.classList.add("paused");
-
-            console.log("Playback waiting for interaction:", error);
+            console.log("Video playback:", error);
+            video.closest(".video-stage")?.classList.add("paused");
         }
     }
 
     function setupVideoPlayback() {
-        if (videoObserver) {
-            videoObserver.disconnect();
-        }
+        videoObserver?.disconnect();
 
-        if (!("IntersectionObserver" in window)) {
-            return;
-        }
+        if (!("IntersectionObserver" in window)) return;
 
         videoObserver = new IntersectionObserver(entries => {
             entries.forEach(entry => {
@@ -437,9 +433,7 @@
                     playVideo(video);
                 } else {
                     video.pause();
-
-                    video.closest(".video-stage")
-                        ?.classList.add("paused");
+                    video.closest(".video-stage")?.classList.add("paused");
                 }
             });
         }, {
@@ -460,21 +454,19 @@
                     await playVideo(video);
                 } else {
                     video.pause();
-
-                    video.closest(".video-stage")
-                        ?.classList.add("paused");
+                    video.closest(".video-stage")?.classList.add("paused");
                 }
             });
 
             video.addEventListener("error", () => {
-                console.error("Video could not load:", video.src);
+                console.error("Could not load video:", video.src);
             });
         });
     }
 
-    /* =================================
-       RENDER VIDEO FEED
-    ================================= */
+    /* ==================================
+       RENDER FEED
+    ================================== */
 
     function render() {
         const list = visibleVideos();
@@ -488,12 +480,7 @@
                 currentPage === "Home" ? "For You" : currentPage;
         }
 
-        if ($("emptyState")) {
-            $("emptyState").classList.toggle(
-                "hidden",
-                list.length > 0
-            );
-        }
+        $("emptyState")?.classList.toggle("hidden", list.length > 0);
 
         list.forEach(video => {
             const card = document.createElement("article");
@@ -504,7 +491,9 @@
             const source = video.objectUrl || video.src;
 
             const canDelete =
-                !video.demo && video.ownerId === currentUser.id;
+                isLoggedIn() &&
+                !video.demo &&
+                video.ownerId === currentUser.id;
 
             card.innerHTML = `
                 <div class="video-main">
@@ -529,23 +518,17 @@
                     <div class="video-meta">
 
                         <div class="creator-avatar">
-                            ${escapeHTML(
-                                (video.username || "V")
-                                    .slice(0, 2)
-                                    .toUpperCase()
-                            )}
+                            ${escapeHTML(video.username.slice(0, 2).toUpperCase())}
                         </div>
 
                         <div class="creator-text">
-
                             <p class="creator-name">
                                 @${escapeHTML(video.username)}
                             </p>
 
                             <span class="creator-handle">
-                                ${escapeHTML(video.displayName || "V-Tik creator")}
+                                ${escapeHTML(video.displayName || video.username)}
                             </span>
-
                         </div>
 
                         <button
@@ -567,23 +550,18 @@
                     <div class="action-wrap">
                         <button
                             class="action-button like-button ${video.liked ? "active" : ""}"
-                            data-action="like"
-                            aria-label="Like video">
+                            data-action="like">
                             ${video.liked ? "♥" : "♡"}
                         </button>
-
                         <span class="action-count">
                             ${formatLikes(video.likes)}
                         </span>
                     </div>
 
                     <div class="action-wrap">
-                        <button
-                            class="action-button"
-                            data-action="comment">
+                        <button class="action-button" data-action="comment">
                             💬
                         </button>
-
                         <span class="action-count">
                             ${video.comments.length}
                         </span>
@@ -595,30 +573,23 @@
                             data-action="save">
                             ${video.saved ? "🔖" : "♧"}
                         </button>
-
                         <span class="action-count">
                             ${video.saved ? "Saved" : "Save"}
                         </span>
                     </div>
 
                     <div class="action-wrap">
-                        <button
-                            class="action-button"
-                            data-action="share">
+                        <button class="action-button" data-action="share">
                             ↗
                         </button>
-
                         <span class="action-count">Share</span>
                     </div>
 
                     ${canDelete ? `
                         <div class="action-wrap">
-                            <button
-                                class="action-button"
-                                data-action="delete">
+                            <button class="action-button" data-action="delete">
                                 ⋯
                             </button>
-
                             <span class="action-count">More</span>
                         </div>
                     ` : ""}
@@ -632,14 +603,17 @@
         setupVideoPlayback();
     }
 
-    /* =================================
-       SCROLLING ONE VIDEO AT A TIME
-    ================================= */
+    /* ==================================
+       SCROLL CONTROLS
+    ================================== */
 
-    function getNearestCardIndex() {
+    function scrollVideo(direction) {
         const cards = [...feed.querySelectorAll(".video-card")];
 
-        if (!cards.length) return -1;
+        if (!cards.length) {
+            notify("No videos available.");
+            return;
+        }
 
         const feedTop = feed.getBoundingClientRect().top;
 
@@ -657,25 +631,10 @@
             }
         });
 
-        return nearestIndex;
-    }
-
-    function scrollVideo(direction) {
-        const cards = [...feed.querySelectorAll(".video-card")];
-
-        if (!cards.length) {
-            notify("No videos available.");
-            return;
-        }
-
-        const currentIndex = getNearestCardIndex();
-
         const nextIndex = Math.max(
             0,
-            Math.min(cards.length - 1, currentIndex + direction)
+            Math.min(cards.length - 1, nearestIndex + direction)
         );
-
-        const feedTop = feed.getBoundingClientRect().top;
 
         const targetPosition =
             feed.scrollTop +
@@ -688,13 +647,8 @@
         });
     }
 
-    $("scrollUp")?.addEventListener("click", () => {
-        scrollVideo(-1);
-    });
-
-    $("scrollDown")?.addEventListener("click", () => {
-        scrollVideo(1);
-    });
+    $("scrollUp")?.addEventListener("click", () => scrollVideo(-1));
+    $("scrollDown")?.addEventListener("click", () => scrollVideo(1));
 
     document.querySelectorAll(".scroll-up").forEach(button => {
         button.addEventListener("click", () => scrollVideo(-1));
@@ -709,28 +663,22 @@
 
         feed.addEventListener("scroll", () => {
             clearTimeout(scrollTimer);
-
             stopAllVideos();
 
             scrollTimer = setTimeout(() => {
-                const cards = [
-                    ...feed.querySelectorAll(".video-card")
-                ];
+                const cards = [...feed.querySelectorAll(".video-card")];
 
                 let bestCard = null;
                 let bestVisibility = 0;
 
                 cards.forEach(card => {
                     const rect = card.getBoundingClientRect();
-
                     const feedRect = feed.getBoundingClientRect();
-
-                    const visibleTop = Math.max(rect.top, feedRect.top);
-                    const visibleBottom = Math.min(rect.bottom, feedRect.bottom);
 
                     const visibleHeight = Math.max(
                         0,
-                        visibleBottom - visibleTop
+                        Math.min(rect.bottom, feedRect.bottom) -
+                        Math.max(rect.top, feedRect.top)
                     );
 
                     if (visibleHeight > bestVisibility) {
@@ -739,35 +687,29 @@
                     }
                 });
 
-                if (bestCard) {
-                    const video = bestCard.querySelector("video");
+                const video = bestCard?.querySelector("video");
 
-                    if (video && bestVisibility > 0) {
-                        playVideo(video);
-                    }
-                }
+                if (video) playVideo(video);
             }, 180);
-
         }, { passive: true });
     }
 
-    /* =================================
-       SOUND UNLOCK
-    ================================= */
+    /* ==================================
+       SOUND
+    ================================== */
 
     function unlockVideoSound() {
         userHasInteracted = true;
 
-        const visibleVideo = [
+        const videosOnPage = [
             ...document.querySelectorAll(".video-stage video")
-        ].find(video => {
+        ];
+
+        const visibleVideo = videosOnPage.find(video => {
             const rect = video.getBoundingClientRect();
 
-            const visibleHeight =
-                Math.min(rect.bottom, window.innerHeight) -
-                Math.max(rect.top, 0);
-
-            return visibleHeight >= rect.height * 0.6;
+            return rect.top < window.innerHeight * 0.7 &&
+                rect.bottom > window.innerHeight * 0.3;
         });
 
         if (visibleVideo) {
@@ -788,13 +730,14 @@
         once: true
     });
 
-    /* =================================
-       LIKE
-    ================================= */
+    /* ==================================
+       LIKE / SAVE / FOLLOW
+    ================================== */
 
     function toggleLike(video) {
-        video.liked = !video.liked;
+        if (!requireLogin()) return;
 
+        video.liked = !video.liked;
         video.likes = Math.max(
             0,
             video.likes + (video.liked ? 1 : -1)
@@ -806,28 +749,35 @@
         notify(video.liked ? "❤️ Video liked!" : "Like removed");
     }
 
-    /* =================================
-       SAVE VIDEO
-    ================================= */
-
     function toggleSave(video) {
+        if (!requireLogin()) return;
+
         video.saved = !video.saved;
 
         saveInteractions();
         render();
 
-        notify(
-            video.saved
-                ? "🔖 Video added to Saved!"
-                : "Video removed from Saved"
-        );
+        notify(video.saved ? "Video saved!" : "Video removed from Saved");
     }
 
-    /* =================================
+    function toggleFollow(video) {
+        if (!requireLogin()) return;
+
+        video.following = !video.following;
+
+        saveInteractions();
+        render();
+
+        notify(video.following ? "Following creator!" : "Unfollowed creator");
+    }
+
+    /* ==================================
        COMMENTS
-    ================================= */
+    ================================== */
 
     function openComments(video) {
+        if (!requireLogin()) return;
+
         activeCommentId = video.id;
 
         if ($("commentsTitle")) {
@@ -836,7 +786,6 @@
         }
 
         renderComments(video);
-
         $("commentsModal")?.classList.remove("hidden");
         $("commentInput")?.focus();
     }
@@ -871,11 +820,12 @@
     $("commentForm")?.addEventListener("submit", event => {
         event.preventDefault();
 
-        const text = $("commentInput")?.value.trim();
+        if (!requireLogin()) return;
 
-        const video = videos.find(
-            item => item.id === activeCommentId
-        );
+        const input = $("commentInput");
+        const text = input?.value.trim();
+
+        const video = videos.find(item => item.id === activeCommentId);
 
         if (!text || !video) return;
 
@@ -885,7 +835,7 @@
             date: new Date().toISOString()
         });
 
-        $("commentInput").value = "";
+        input.value = "";
 
         saveInteractions();
         renderComments(video);
@@ -893,15 +843,14 @@
         notify("Comment posted!");
     });
 
-    /* =================================
+    /* ==================================
        SHARE
-    ================================= */
+    ================================== */
 
     async function shareVideo(video) {
         const shareURL = new URL(window.location.href);
 
-        shareURL.hash =
-            "video-" + encodeURIComponent(video.id);
+        shareURL.hash = "video-" + encodeURIComponent(video.id);
 
         const shareData = {
             title: "Watch on V-Tik",
@@ -910,16 +859,10 @@
         };
 
         try {
-            if (
-                navigator.share &&
-                navigator.canShare?.(shareData)
-            ) {
+            if (navigator.share) {
                 await navigator.share(shareData);
                 notify("Share menu opened!");
-            } else if (
-                navigator.clipboard &&
-                window.isSecureContext
-            ) {
+            } else if (navigator.clipboard && window.isSecureContext) {
                 await navigator.clipboard.writeText(shareURL.href);
                 notify("Video link copied!");
             } else {
@@ -933,11 +876,7 @@
 
                 input.remove();
 
-                notify(
-                    copied
-                        ? "Video link copied!"
-                        : "Could not copy link."
-                );
+                notify(copied ? "Video link copied!" : "Could not copy link.");
             }
         } catch (error) {
             if (error.name !== "AbortError") {
@@ -946,29 +885,13 @@
         }
     }
 
-    /* =================================
-       FOLLOW
-    ================================= */
-
-    function toggleFollow(video) {
-        video.following = !video.following;
-
-        saveInteractions();
-        render();
-
-        notify(
-            video.following
-                ? "Following creator!"
-                : "Unfollowed creator"
-        );
-    }
-
-    /* =================================
-       DELETE VIDEO
-    ================================= */
+    /* ==================================
+       DELETE OWN VIDEO
+    ================================== */
 
     async function deleteVideo(video) {
-        // Users can only delete videos they own.
+        if (!requireLogin()) return;
+
         if (video.ownerId !== currentUser.id) {
             notify("You can only delete your own videos.");
             return;
@@ -982,21 +905,24 @@
             URL.revokeObjectURL(video.objectUrl);
         }
 
-        videos = videos.filter(item => item.id !== video.id);
+        try {
+            await removeUpload(video.id);
 
-        await removeUpload(video.id).catch(error => {
+            videos = videos.filter(item => item.id !== video.id);
+
+            saveInteractions();
+            render();
+
+            notify("Video deleted successfully!");
+        } catch (error) {
             console.error(error);
-        });
-
-        saveInteractions();
-        render();
-
-        notify("Video deleted successfully!");
+            notify("Could not delete this video.");
+        }
     }
 
-    /* =================================
-       VIDEO BUTTON EVENTS
-    ================================= */
+    /* ==================================
+       FEED BUTTON EVENTS
+    ================================== */
 
     feed.addEventListener("click", async event => {
         const button = event.target.closest("[data-action]");
@@ -1005,9 +931,7 @@
 
         const card = button.closest(".video-card");
 
-        const video = videos.find(
-            item => item.id === card?.dataset.id
-        );
+        const video = videos.find(item => item.id === card?.dataset.id);
 
         if (!video) return;
 
@@ -1038,9 +962,9 @@
         }
     });
 
-    /* =================================
+    /* ==================================
        MODALS
-    ================================= */
+    ================================== */
 
     function showModal(id) {
         $(id)?.classList.remove("hidden");
@@ -1051,14 +975,17 @@
     }
 
     $("openUpload")?.addEventListener("click", () => {
+        if (!requireLogin()) return;
         showModal("uploadModal");
     });
 
     $("mobileUpload")?.addEventListener("click", () => {
+        if (!requireLogin()) return;
         showModal("uploadModal");
     });
 
     $("emptyUpload")?.addEventListener("click", () => {
+        if (!requireLogin()) return;
         showModal("uploadModal");
     });
 
@@ -1083,9 +1010,9 @@
         }
     });
 
-    /* =================================
+    /* ==================================
        UPLOAD VIDEO
-    ================================= */
+    ================================== */
 
     $("videoFile")?.addEventListener("change", () => {
         const file = $("videoFile").files[0];
@@ -1097,14 +1024,18 @@
     });
 
     $("publishVideo")?.addEventListener("click", async () => {
+        if (!requireLogin()) return;
+
         const file = $("videoFile")?.files[0];
 
         if (!file) {
-            return notify("Choose a video first.");
+            notify("Choose a video first.");
+            return;
         }
 
         if (!file.type.startsWith("video/")) {
-            return notify("Please choose a valid video file.");
+            notify("Please choose a valid video file.");
+            return;
         }
 
         const record = {
@@ -1113,8 +1044,6 @@
 
             username: getUsername(),
             displayName: getDisplayName(),
-
-            // Ownership connects the video to its creator.
             ownerId: currentUser.id,
 
             caption: $("videoCaption")?.value.trim() ||
@@ -1125,7 +1054,6 @@
             likes: 0,
             comments: [],
             views: "0",
-
             following: false,
             liked: false,
             saved: false,
@@ -1136,7 +1064,6 @@
 
         try {
             await saveUpload(record);
-
             await loadVideos();
 
             $("videoFile").value = "";
@@ -1160,41 +1087,48 @@
 
         } catch (error) {
             console.error(error);
-
-            notify("Could not save this video. Try a smaller file.");
+            notify("Could not save your video. Try a smaller file.");
         }
     });
 
-    /* =================================
+    /* ==================================
        SEARCH
-    ================================= */
+    ================================== */
 
     $("searchInput")?.addEventListener("input", render);
 
     $("clearSearch")?.addEventListener("click", () => {
-        $("searchInput").value = "";
+        if ($("searchInput")) {
+            $("searchInput").value = "";
+            $("searchInput").focus();
+        }
 
         render();
-
-        $("searchInput").focus();
     });
 
-    /* =================================
+    /* ==================================
        NAVIGATION
-    ================================= */
+    ================================== */
 
     document.querySelectorAll("[data-page]").forEach(button => {
         button.addEventListener("click", () => {
-            currentPage = button.dataset.page;
+            const page = button.dataset.page;
 
-            if (currentPage === "Profile") {
-                window.location.href = "accounts.html";
+            if (page === "Profile") {
+                if (!requireLogin()) return;
+
+                window.location.href = "./accounts.html";
                 return;
             }
 
-            if (currentPage === "My Videos") {
-                currentPage = "My Videos";
+            if (
+                ["Liked", "Saved", "Following", "My Videos"].includes(page) &&
+                !requireLogin()
+            ) {
+                return;
             }
+
+            currentPage = page;
 
             document.querySelectorAll("[data-page]").forEach(item => {
                 const active = item.dataset.page === currentPage;
@@ -1225,9 +1159,9 @@
         });
     });
 
-    /* =================================
-       LOAD USER VIDEOS
-    ================================= */
+    /* ==================================
+       LOAD VIDEOS
+    ================================== */
 
     async function loadVideos() {
         stopAllVideos();
@@ -1243,16 +1177,14 @@
             return [];
         });
 
-        // Only show videos belonging to this account.
-        const myUploads = uploads.filter(item =>
-            item.ownerId === currentUser.id && item.blob
-        );
-
-        const uploadedVideos = myUploads.map(item => ({
-            ...item,
-            objectUrl: URL.createObjectURL(item.blob),
-            comments: item.comments || []
-        }));
+        // This browser-only version shows the logged-in user's uploads.
+        const uploadedVideos = uploads
+            .filter(item => item.blob)
+            .map(item => ({
+                ...item,
+                objectUrl: URL.createObjectURL(item.blob),
+                comments: item.comments || []
+            }));
 
         videos = [
             ...uploadedVideos,
@@ -1263,18 +1195,17 @@
         ];
 
         restoreInteractions();
-
         render();
     }
 
-    /* =================================
-       START V-TIK
-    ================================= */
+    /* ==================================
+       START APP
+    ================================== */
 
     enableOneVideoScrolling();
 
     loadVideos().catch(error => {
-        console.error("V-Tik could not start:", error);
+        console.error("V-Tik startup error:", error);
         notify("Could not load V-Tik videos.");
     });
 
