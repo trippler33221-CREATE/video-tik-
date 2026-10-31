@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,10 +6,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#09090d">
 
+  <meta name="description" content="V-Tik Pro - Watch, create and share amazing short videos.">
+
   <title>V-Tik Pro — Watch, Create & Share</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="style.css">
@@ -16,7 +20,8 @@
 
 <body>
 
-  <!-- TOP NAVIGATION -->
+  <!-- ================= TOP HEADER ================= -->
+
   <header class="topbar">
 
     <a href="index.html" class="brand">
@@ -25,16 +30,22 @@
     </a>
 
     <div class="search-box">
-      <span>⌕</span>
+      <span class="search-icon">⌕</span>
+
       <input
         type="search"
         id="searchInput"
         placeholder="Search videos or creators..."
+        aria-label="Search videos or creators"
       >
-      <button id="clearSearch" type="button">×</button>
+
+      <button id="clearSearch" type="button" aria-label="Clear search">
+        ×
+      </button>
     </div>
 
     <div class="top-actions">
+
       <button id="createTop" class="create-button">
         <span>＋</span> Create
       </button>
@@ -42,52 +53,68 @@
       <a href="accounts.html" class="avatar small" id="headerAvatar">
         TR
       </a>
+
     </div>
 
   </header>
 
 
-  <!-- MAIN PAGE -->
+  <!-- ================= MAIN LAYOUT ================= -->
+
   <div class="app-layout">
 
     <!-- LEFT SIDEBAR -->
+
     <aside class="sidebar">
 
       <div class="sidebar-section">
+
         <p class="sidebar-heading">DISCOVER</p>
 
-        <button class="sidebar-link active" id="mobileHome">
-          <span>⌂</span> Home
-        </button>
+        <a href="index.html" class="sidebar-link active">
+          <span>⌂</span>
+          <span>Home</span>
+        </a>
 
         <button class="sidebar-link" id="discoverBtn">
-          <span>⌕</span> Explore
-        </button>
-
-        <button class="sidebar-link" id="mobileInbox">
-          <span>♧</span> Following
+          <span>⌕</span>
+          <span>Explore</span>
         </button>
 
         <a href="accounts.html" class="sidebar-link">
-          <span>♙</span> Profile
+          <span>♧</span>
+          <span>Following</span>
         </a>
+
+        <a href="accounts.html" class="sidebar-link">
+          <span>♙</span>
+          <span>Profile</span>
+        </a>
+
       </div>
 
+
       <div class="sidebar-section">
+
         <p class="sidebar-heading">MORE</p>
 
         <a href="#" class="sidebar-link">
-          <span>ⓘ</span> About V-Tik
+          <span>ⓘ</span>
+          <span>About V-Tik</span>
         </a>
 
         <a href="#" class="sidebar-link">
-          <span>♧</span> Privacy
+          <span>♧</span>
+          <span>Privacy</span>
         </a>
 
         <a href="#" class="sidebar-link">
-          <span>▤</span> Terms
+          <span>▤</span>
+          <span>Terms</span>
         </a>
+
       </div>
+
 
       <div class="sidebar-footer">
         <p>© 2026 V-Tik Pro</p>
@@ -98,9 +125,11 @@
 
 
     <!-- CENTRAL VIDEO FEED -->
+
     <main class="main-content">
 
       <div class="feed-heading">
+
         <div>
           <h1>For You</h1>
           <p>Discover videos from the V-Tik community.</p>
@@ -109,14 +138,22 @@
         <button id="openCreate" class="upload-small">
           ＋ Upload
         </button>
+
       </div>
 
-      <!-- EACH VIDEO GETS ITS OWN CARD -->
-      <section id="videoFeed" class="video-feed">
-        <!-- Videos are added here by app.js -->
+
+      <!-- VIDEO CARDS ARE CREATED BY APP.JS -->
+
+      <section
+        id="videoFeed"
+        class="video-feed"
+        aria-label="V-Tik video feed"
+      >
       </section>
 
-      <!-- EMPTY FEED MESSAGE -->
+
+      <!-- EMPTY FEED -->
+
       <div id="emptyState" class="empty-state hidden">
 
         <div class="empty-icon">▶</div>
@@ -137,10 +174,14 @@
     </main>
 
 
-    <!-- RIGHT SIDE PANEL -->
+    <!-- RIGHT SIDEBAR -->
+
     <aside class="right-sidebar">
 
       <div class="right-card">
+
+        <div class="welcome-icon">▶</div>
+
         <h3>Welcome to V-Tik Pro</h3>
 
         <p>
@@ -148,12 +189,15 @@
           and share your favourite moments.
         </p>
 
-        <button id="mobileCreate" class="create-button full-button">
+        <button id="rightCreate" class="create-button full-button">
           ＋ Create video
         </button>
+
       </div>
 
+
       <div class="right-card">
+
         <h3>Trending on V-Tik</h3>
 
         <div class="trending-item">
@@ -179,6 +223,31 @@
             <small>Funny moments</small>
           </div>
         </div>
+
+        <div class="trending-item">
+          <span>⚽</span>
+          <div>
+            <strong>#Sports</strong>
+            <small>Sports and highlights</small>
+          </div>
+        </div>
+
+      </div>
+
+
+      <div class="right-card community-card">
+
+        <h3>Join the community</h3>
+
+        <p>
+          Create an account and start sharing your
+          favourite videos with everyone.
+        </p>
+
+        <a href="accounts.html" class="community-link">
+          Visit your account →
+        </a>
+
       </div>
 
     </aside>
@@ -186,29 +255,30 @@
   </div>
 
 
-  <!-- MOBILE BOTTOM NAVIGATION -->
-  <nav class="mobile-nav">
+  <!-- ================= MOBILE NAVIGATION ================= -->
 
-    <button id="mobileHome">
+  <nav class="mobile-nav" aria-label="Mobile navigation">
+
+    <button id="mobileHome" class="mobile-nav-item active">
       <span>⌂</span>
       <small>Home</small>
     </button>
 
-    <button id="mobileDiscover">
+    <button id="mobileDiscover" class="mobile-nav-item">
       <span>⌕</span>
       <small>Discover</small>
     </button>
 
-    <button id="mobileCreate" class="mobile-add">
-      <span>＋</span>
+    <button id="mobileCreate" class="mobile-add" aria-label="Create video">
+      ＋
     </button>
 
-    <button id="mobileInbox">
+    <button id="mobileInbox" class="mobile-nav-item">
       <span>♧</span>
       <small>Following</small>
     </button>
 
-    <button id="mobileProfile">
+    <button id="mobileProfile" class="mobile-nav-item">
       <span>♙</span>
       <small>Profile</small>
     </button>
@@ -216,22 +286,26 @@
   </nav>
 
 
-  <!-- CREATE VIDEO MODAL -->
+  <!-- ================= CREATE VIDEO MODAL ================= -->
+
   <div id="createModal" class="modal hidden">
 
     <div class="modal-content create-panel">
 
       <div class="modal-header">
+
         <h2>Create on V-Tik</h2>
 
-        <button id="closeCreate" class="close-button">
+        <button id="closeCreate" class="close-button" aria-label="Close">
           ×
         </button>
+
       </div>
 
       <p class="modal-description">
         Upload a video and share it with the V-Tik community.
       </p>
+
 
       <label for="videoFile" class="upload-area">
 
@@ -252,9 +326,11 @@
 
       </label>
 
+
       <p id="selectedFile" class="selected-file">
         No video selected
       </p>
+
 
       <label for="videoCaption" class="form-label">
         Video caption
@@ -266,6 +342,7 @@
         rows="3"
       ></textarea>
 
+
       <button id="postVideo" class="post-video-button">
         Post video
       </button>
@@ -275,22 +352,27 @@
   </div>
 
 
-  <!-- COMMENTS MODAL -->
+  <!-- ================= COMMENTS MODAL ================= -->
+
   <div id="commentModal" class="modal hidden">
 
     <div class="modal-content comments-panel">
 
       <div class="modal-header">
+
         <h2>Comments</h2>
 
-        <button id="closeComments" class="close-button">
+        <button id="closeComments" class="close-button" aria-label="Close">
           ×
         </button>
+
       </div>
+
 
       <div id="commentList" class="comment-list">
         <p class="muted">No comments yet.</p>
       </div>
+
 
       <form id="commentForm" class="comment-form">
 
@@ -310,12 +392,21 @@
   </div>
 
 
-  <!-- TOAST MESSAGE -->
+  <!-- ================= TOAST MESSAGE ================= -->
+
   <div id="toast" class="toast hidden"></div>
 
 
-  <!-- JAVASCRIPT -->
+  <!-- ================= JAVASCRIPT ================= -->
+
   <script src="app.js"></script>
+
+  <!-- Right sidebar create button -->
+  <script>
+    document.getElementById("rightCreate")?.addEventListener("click", () => {
+      document.getElementById("createTop")?.click();
+    });
+  </script>
 
 </body>
 </html>
