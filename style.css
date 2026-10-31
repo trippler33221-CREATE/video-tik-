@@ -1160,3 +1160,48 @@ select {
         scroll-behavior: auto !important;
     }
 }
+
+/* LOGIN AND SIGNUP BUTTONS */
+.top-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.auth-btn {
+    text-decoration: none;
+    padding: 10px 17px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    white-space: nowrap;
+    transition: 0.3s ease;
+}
+
+.login-btn {
+    color: #ffffff;
+    border: 1px solid #44444f;
+    background: #20212a;
+}
+
+.signup-btn {
+    color: #ffffff;
+    background: #ff2857;
+    border: 1px solid #ff2857;
+}
+
+.auth-btn:hover {
+    transform: translateY(-2px);
+    opacity: 0.85;
+}
+
+@media (max-width: 600px) {
+    .auth-btn {
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+
+    .top-actions {
+        gap: 6px;
+    }
+}
