@@ -154,8 +154,7 @@
       }, { once: true });
     });
   }
-
- // CREATE ONE INDIVIDUAL VIDEO CARD
+// CREATE ONE INDIVIDUAL VIDEO CARD
 function makeCard(post) {
   const card = document.createElement("article");
   card.className = "video-card";
@@ -240,7 +239,6 @@ function makeCard(post) {
 
   return card;
 }
-
   // LIKE AND SAVE
   function toggleId(key, id) {
     const ids = read(key, []);
