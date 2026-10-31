@@ -1,0 +1,327 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#09090d">
+
+    <title>Sign Up | V-Tik Pro</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #09090d;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .signup-container {
+            width: 100%;
+            max-width: 440px;
+            background: #14141c;
+            border: 1px solid #292934;
+            border-radius: 18px;
+            padding: 35px 30px;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 34px;
+            font-weight: 800;
+            margin-bottom: 25px;
+        }
+
+        .logo span {
+            color: #ff2857;
+        }
+
+        h1 {
+            font-size: 27px;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #999ba8;
+            font-size: 14px;
+            margin-bottom: 28px;
+        }
+
+        .input-group {
+            text-align: left;
+            margin-bottom: 17px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 13px;
+            margin-bottom: 8px;
+            color: #ddd;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 14px;
+            border-radius: 9px;
+            border: 1px solid #353541;
+            background: #20202a;
+            color: white;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .input-group input:focus {
+            border-color: #ff2857;
+        }
+
+        .password-wrapper {
+            position: relative;
+        }
+
+        .password-wrapper input {
+            padding-right: 65px;
+        }
+
+        .show-password {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #ff2857;
+            cursor: pointer;
+        }
+
+        .signup-btn {
+            width: 100%;
+            padding: 15px;
+            background: #ff2857;
+            color: white;
+            border: none;
+            border-radius: 9px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+
+        .signup-btn:hover {
+            background: #e91e4e;
+        }
+
+        .message {
+            font-size: 13px;
+            margin-top: 15px;
+            min-height: 18px;
+            color: #ff6b80;
+        }
+
+        .login-link {
+            margin-top: 23px;
+            color: #aaa;
+            font-size: 14px;
+        }
+
+        .login-link a {
+            color: #ff2857;
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .back-home {
+            display: inline-block;
+            margin-top: 23px;
+            color: #999ba8;
+            text-decoration: none;
+            font-size: 13px;
+        }
+
+        @media(max-width: 480px) {
+            .signup-container {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="signup-container">
+
+        <div class="logo">V<span>-</span>TIK</div>
+
+        <h1>Create Account</h1>
+
+        <p class="subtitle">
+            Join V-Tik Pro and start sharing videos
+        </p>
+
+        <form id="signupForm">
+
+            <div class="input-group">
+                <label for="username">Username</label>
+                <input
+                    type="text"
+                    id="username"
+                    placeholder="Choose a username"
+                    required
+                    minlength="3"
+                >
+            </div>
+
+            <div class="input-group">
+                <label for="email">Email Address</label>
+                <input
+                    type="email"
+                    id="email"
+                    placeholder="Enter your email"
+                    required
+                >
+            </div>
+
+            <div class="input-group">
+                <label for="password">Password</label>
+
+                <div class="password-wrapper">
+                    <input
+                        type="password"
+                        id="password"
+                        placeholder="Create a password"
+                        minlength="8"
+                        required
+                    >
+
+                    <button
+                        type="button"
+                        class="show-password"
+                        id="showPassword"
+                    >
+                        Show
+                    </button>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="confirmPassword">Confirm Password</label>
+                <input
+                    type="password"
+                    id="confirmPassword"
+                    placeholder="Enter password again"
+                    required
+                >
+            </div>
+
+            <button type="submit" class="signup-btn">
+                Create Account
+            </button>
+
+            <p class="message" id="message"></p>
+
+        </form>
+
+        <p class="login-link">
+            Already have an account?
+            <a href="login.html">Log In</a>
+        </p>
+
+        <a href="index.html" class="back-home">
+            ← Back to V-Tik Pro
+        </a>
+
+    </div>
+
+    <script>
+        const signupForm = document.getElementById("signupForm");
+        const message = document.getElementById("message");
+
+        document.getElementById("showPassword").addEventListener("click", function () {
+            const password = document.getElementById("password");
+
+            password.type = password.type === "password"
+                ? "text"
+                : "password";
+
+            this.textContent = password.type === "password"
+                ? "Show"
+                : "Hide";
+        });
+
+        signupForm.addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            const username = document.getElementById("username").value.trim();
+            const email = document.getElementById("email").value.trim().toLowerCase();
+            const password = document.getElementById("password").value;
+            const confirmPassword = document.getElementById("confirmPassword").value;
+
+            let users = JSON.parse(localStorage.getItem("users")) || [];
+
+            if (username.length < 3) {
+                message.textContent = "Username must have at least 3 characters.";
+                return;
+            }
+
+            if (password.length < 8) {
+                message.textContent = "Password must have at least 8 characters.";
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                message.textContent = "Passwords do not match.";
+                return;
+            }
+
+            const usernameExists = users.some(user =>
+                user.username.toLowerCase() === username.toLowerCase()
+            );
+
+            const emailExists = users.some(user =>
+                user.email.toLowerCase() === email
+            );
+
+            if (usernameExists) {
+                message.textContent = "That username is already taken.";
+                return;
+            }
+
+            if (emailExists) {
+                message.textContent = "That email is already registered.";
+                return;
+            }
+
+            const newUser = {
+                id: Date.now().toString(),
+                username: username,
+                email: email,
+                password: password,
+                createdAt: new Date().toISOString()
+            };
+
+            users.push(newUser);
+
+            localStorage.setItem("users", JSON.stringify(users));
+
+            message.style.color = "#35d07f";
+            message.textContent = "Account created successfully!";
+
+            setTimeout(() => {
+                window.location.href = "login.html";
+            }, 1000);
+        });
+    </script>
+
+</body>
+</html>
