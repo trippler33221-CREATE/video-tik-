@@ -1,11 +1,11 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#08080d">
-  <title>V-Tik Pro — Short Videos</title>
+  <meta name="theme-color" content="#09090d">
+
+  <title>V-Tik Pro — Watch, Create & Share</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,88 +16,276 @@
 
 <body>
 
-  <!-- HEADER -->
+  <!-- TOP NAVIGATION -->
   <header class="topbar">
-    <a href="#" class="brand">
-      <img src="Neon V-TIK Video Logo.png" alt="V-Tik logo" onerror="this.style.display='none'">
-      <span>V<span class="brand-white">-TIK</span></span>
+
+    <a href="index.html" class="brand">
+      <span class="brand-v">V</span><span>-TIK</span>
+      <small>PRO</small>
     </a>
 
     <div class="search-box">
       <span>⌕</span>
-      <input id="searchInput" type="search" placeholder="Search videos..." autocomplete="off">
-      <button id="clearSearch" type="button" aria-label="Clear search">×</button>
+      <input
+        type="search"
+        id="searchInput"
+        placeholder="Search videos or creators..."
+      >
+      <button id="clearSearch" type="button">×</button>
     </div>
 
     <div class="top-actions">
-      <button class="create-top" id="createTop">＋ Create</button>
-      <button class="header-avatar" id="headerAvatar">TR</button>
+      <button id="createTop" class="create-button">
+        <span>＋</span> Create
+      </button>
+
+      <a href="accounts.html" class="avatar small" id="headerAvatar">
+        TR
+      </a>
     </div>
+
   </header>
 
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <nav>
-      <button class="side-link active" id="discoverBtn">⌂ <span>Explore</span></button>
-      <a class="side-link" href="#about">ⓘ <span>About</span></a>
-      <a class="side-link" href="#privacy">▤ <span>Privacy</span></a>
-      <a class="side-link" href="#terms">▧ <span>Terms</span></a>
-    </nav>
 
-    <div class="sidebar-footer">
-      © 2026 V-Tik
-    </div>
-  </aside>
+  <!-- MAIN PAGE -->
+  <div class="app-layout">
 
-  <!-- MAIN FEED -->
-  <main class="main-content">
-    <section class="feed-section">
+    <!-- LEFT SIDEBAR -->
+    <aside class="sidebar">
+
+      <div class="sidebar-section">
+        <p class="sidebar-heading">DISCOVER</p>
+
+        <button class="sidebar-link active" id="mobileHome">
+          <span>⌂</span> Home
+        </button>
+
+        <button class="sidebar-link" id="discoverBtn">
+          <span>⌕</span> Explore
+        </button>
+
+        <button class="sidebar-link" id="mobileInbox">
+          <span>♧</span> Following
+        </button>
+
+        <a href="accounts.html" class="sidebar-link">
+          <span>♙</span> Profile
+        </a>
+      </div>
+
+      <div class="sidebar-section">
+        <p class="sidebar-heading">MORE</p>
+
+        <a href="#" class="sidebar-link">
+          <span>ⓘ</span> About V-Tik
+        </a>
+
+        <a href="#" class="sidebar-link">
+          <span>♧</span> Privacy
+        </a>
+
+        <a href="#" class="sidebar-link">
+          <span>▤</span> Terms
+        </a>
+      </div>
+
+      <div class="sidebar-footer">
+        <p>© 2026 V-Tik Pro</p>
+        <p>Discover. Create. Share.</p>
+      </div>
+
+    </aside>
+
+
+    <!-- CENTRAL VIDEO FEED -->
+    <main class="main-content">
+
       <div class="feed-heading">
         <div>
-          <span class="eyebrow">YOUR VIDEO COMMUNITY</span>
           <h1>For You</h1>
+          <p>Discover videos from the V-Tik community.</p>
         </div>
-        <p>Discover and enjoy videos from V-Tik creators.</p>
+
+        <button id="openCreate" class="upload-small">
+          ＋ Upload
+        </button>
       </div>
 
-      <div id="videoFeed" class="video-feed"></div>
+      <!-- EACH VIDEO GETS ITS OWN CARD -->
+      <section id="videoFeed" class="video-feed">
+        <!-- Videos are added here by app.js -->
+      </section>
 
+      <!-- EMPTY FEED MESSAGE -->
       <div id="emptyState" class="empty-state hidden">
+
         <div class="empty-icon">▶</div>
+
         <h2>No videos found</h2>
-        <p>Try another search or share your first video on V-Tik.</p>
-        <button id="emptyCreate" class="create-top">＋ Upload a video</button>
+
+        <p>
+          There are no videos to display.
+          Be the first to share something!
+        </p>
+
+        <button id="emptyCreate" class="create-button">
+          ＋ Create a video
+        </button>
+
       </div>
-    </section>
-  </main>
 
-  <!-- MOBILE NAVIGATION -->
+    </main>
+
+
+    <!-- RIGHT SIDE PANEL -->
+    <aside class="right-sidebar">
+
+      <div class="right-card">
+        <h3>Welcome to V-Tik Pro</h3>
+
+        <p>
+          Watch exciting videos, discover creators
+          and share your favourite moments.
+        </p>
+
+        <button id="mobileCreate" class="create-button full-button">
+          ＋ Create video
+        </button>
+      </div>
+
+      <div class="right-card">
+        <h3>Trending on V-Tik</h3>
+
+        <div class="trending-item">
+          <span>🔥</span>
+          <div>
+            <strong>#V-Tik</strong>
+            <small>Discover new videos</small>
+          </div>
+        </div>
+
+        <div class="trending-item">
+          <span>🎵</span>
+          <div>
+            <strong>#Music</strong>
+            <small>Music and entertainment</small>
+          </div>
+        </div>
+
+        <div class="trending-item">
+          <span>😂</span>
+          <div>
+            <strong>#Comedy</strong>
+            <small>Funny moments</small>
+          </div>
+        </div>
+      </div>
+
+    </aside>
+
+  </div>
+
+
+  <!-- MOBILE BOTTOM NAVIGATION -->
   <nav class="mobile-nav">
-    <button class="mobile-link active" id="mobileHome">
-      <span>⌂</span><small>Home</small>
+
+    <button id="mobileHome">
+      <span>⌂</span>
+      <small>Home</small>
     </button>
 
-    <button class="mobile-link" id="mobileDiscover">
-      <span>⌕</span><small>Discover</small>
+    <button id="mobileDiscover">
+      <span>⌕</span>
+      <small>Discover</small>
     </button>
 
-    <button class="mobile-create" id="mobileCreate">＋</button>
-
-    <button class="mobile-link" id="mobileInbox">
-      <span>▱</span><small>Inbox</small>
+    <button id="mobileCreate" class="mobile-add">
+      <span>＋</span>
     </button>
 
-    <button class="mobile-link" id="mobileProfile">
-      <span>◉</span><small>Profile</small>
+    <button id="mobileInbox">
+      <span>♧</span>
+      <small>Following</small>
     </button>
+
+    <button id="mobileProfile">
+      <span>♙</span>
+      <small>Profile</small>
+    </button>
+
   </nav>
 
+
+  <!-- CREATE VIDEO MODAL -->
+  <div id="createModal" class="modal hidden">
+
+    <div class="modal-content create-panel">
+
+      <div class="modal-header">
+        <h2>Create on V-Tik</h2>
+
+        <button id="closeCreate" class="close-button">
+          ×
+        </button>
+      </div>
+
+      <p class="modal-description">
+        Upload a video and share it with the V-Tik community.
+      </p>
+
+      <label for="videoFile" class="upload-area">
+
+        <div class="upload-icon">⇧</div>
+
+        <h3>Upload your video</h3>
+
+        <p>Choose a video from your device.</p>
+
+        <span class="choose-button">Choose video</span>
+
+        <input
+          type="file"
+          id="videoFile"
+          accept="video/*"
+          hidden
+        >
+
+      </label>
+
+      <p id="selectedFile" class="selected-file">
+        No video selected
+      </p>
+
+      <label for="videoCaption" class="form-label">
+        Video caption
+      </label>
+
+      <textarea
+        id="videoCaption"
+        placeholder="Write a caption for your video..."
+        rows="3"
+      ></textarea>
+
+      <button id="postVideo" class="post-video-button">
+        Post video
+      </button>
+
+    </div>
+
+  </div>
+
+
   <!-- COMMENTS MODAL -->
-  <div class="modal hidden" id="commentModal">
-    <div class="modal-panel comments-panel">
-      <div class="modal-heading">
+  <div id="commentModal" class="modal hidden">
+
+    <div class="modal-content comments-panel">
+
+      <div class="modal-header">
         <h2>Comments</h2>
-        <button class="close-btn" id="closeComments">×</button>
+
+        <button id="closeComments" class="close-button">
+          ×
+        </button>
       </div>
 
       <div id="commentList" class="comment-list">
@@ -105,52 +293,29 @@
       </div>
 
       <form id="commentForm" class="comment-form">
-        <input id="commentInput" type="text" placeholder="Add a comment..." maxlength="300" required>
+
+        <input
+          type="text"
+          id="commentInput"
+          placeholder="Add a comment..."
+          required
+        >
+
         <button type="submit">Post</button>
+
       </form>
+
     </div>
+
   </div>
 
-  <!-- CREATE VIDEO MODAL -->
-  <div class="modal hidden" id="createModal">
-    <div class="modal-panel create-panel">
-      <div class="modal-heading">
-        <div>
-          <span class="eyebrow">SHARE YOUR MOMENT</span>
-          <h2>Create on V-Tik</h2>
-        </div>
-        <button class="close-btn" id="closeCreate">×</button>
-      </div>
 
-      <p class="modal-description">
-        Select a video from your device and add a caption before posting.
-      </p>
-
-      <label class="upload-area" for="videoFile">
-        <span class="upload-icon">⇧</span>
-        <strong>Select a video from your device.</strong>
-        <span class="upload-small">MP4, WebM or Ogg recommended.</span>
-        <span class="choose-file">Choose video</span>
-      </label>
-
-      <input type="file" id="videoFile" accept="video/*" hidden>
-
-      <p id="selectedFile" class="selected-file">No video selected</p>
-
-      <label class="caption-label" for="videoCaption">Caption</label>
-      <textarea id="videoCaption" placeholder="Write a caption..." maxlength="500"></textarea>
-
-      <p class="upload-note">
-        Browser demo: uploads are stored locally and are not automatically shared with other users.
-      </p>
-
-      <button id="postVideo" class="post-video-btn">Post video</button>
-    </div>
-  </div>
-
-  <!-- TOAST -->
+  <!-- TOAST MESSAGE -->
   <div id="toast" class="toast hidden"></div>
 
-  <script src="app.js" defer></script>
+
+  <!-- JAVASCRIPT -->
+  <script src="app.js"></script>
+
 </body>
 </html>
