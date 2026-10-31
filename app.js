@@ -15,6 +15,9 @@
     let currentPage = "Home";
     let toastTimer;
 
+    let videoObserver = null;
+    let userHasInteracted = false;
+
     /* ============================
        DEMO VIDEOS
     ============================ */
@@ -35,7 +38,6 @@
             src: "fik logogo (1).mp4",
             demo: true
         },
-
         {
             id: "demo-3",
             username: "gamerpro",
@@ -51,7 +53,6 @@
             src: "fik logogo (1).mp4",
             demo: true
         },
-
         {
             id: "demo-4",
             username: "trendking",
@@ -67,7 +68,6 @@
             src: "fik logogo (1).mp4",
             demo: true
         },
-
         {
             id: "demo-5",
             username: "sportszone",
@@ -83,7 +83,6 @@
             src: "fik logogo (1).mp4",
             demo: true
         }
-
     ];
 
     /* ============================
@@ -91,8 +90,9 @@
     ============================ */
 
     function notify(message) {
-
         const el = $("toast");
+
+        if (!el) return;
 
         el.textContent = message;
         el.classList.add("show");
@@ -102,7 +102,6 @@
         toastTimer = setTimeout(() => {
             el.classList.remove("show");
         }, 2400);
-
     }
 
     /* ============================
@@ -110,27 +109,19 @@
     ============================ */
 
     function getInteractions() {
-
         try {
-
             return JSON.parse(
                 localStorage.getItem(INTERACTION_KEY) || "{}"
             );
-
         } catch {
-
             return {};
-
         }
-
     }
 
     function saveInteractions() {
-
         const data = {};
 
         videos.forEach(video => {
-
             data[video.id] = {
                 liked: video.liked,
                 saved: video.saved,
@@ -138,46 +129,33 @@
                 likes: video.likes,
                 comments: video.comments
             };
-
         });
 
         try {
-
             localStorage.setItem(
                 INTERACTION_KEY,
                 JSON.stringify(data)
             );
-
         } catch (error) {
-
             console.error("Could not save interactions:", error);
-
             notify("Storage is full. Some changes may not be saved.");
-
         }
-
     }
 
     function restoreInteractions() {
-
         const data = getInteractions();
 
         videos.forEach(video => {
-
             const saved = data[video.id];
 
             if (saved) {
-
                 video.liked = saved.liked ?? false;
                 video.saved = saved.saved ?? false;
                 video.following = saved.following ?? false;
                 video.likes = saved.likes ?? video.likes;
                 video.comments = saved.comments ?? video.comments;
-
             }
-
         });
-
     }
 
     /* ============================
@@ -185,67 +163,61 @@
     ============================ */
 
     function openDB() {
-
         return new Promise((resolve, reject) => {
-
             if (!("indexedDB" in window)) {
-
                 return reject(new Error("IndexedDB unavailable"));
-
             }
 
             const request = indexedDB.open(DB_NAME, 1);
 
             request.onupgradeneeded = () => {
-
                 const db = request.result;
 
                 if (!db.objectStoreNames.contains(STORE)) {
-
                     db.createObjectStore(STORE, {
                         keyPath: "id"
                     });
-
                 }
-
             };
 
             request.onsuccess = () => resolve(request.result);
-
             request.onerror = () => reject(request.error);
-
         });
-
     }
 
     async function dbAction(mode, action) {
-
         const db = await openDB();
 
         return new Promise((resolve, reject) => {
-
             const tx = db.transaction(STORE, mode);
-
             const store = tx.objectStore(STORE);
-
             const request = action(store);
 
-            request.onsuccess = () => resolve(request.result);
+            let result;
 
-            request.onerror = () => reject(request.error);
-
-            tx.oncomplete = () => db.close();
-
-            tx.onerror = () => {
-
-                db.close();
-
-                reject(tx.error);
-
+            request.onsuccess = () => {
+                result = request.result;
             };
 
-        });
+            request.onerror = () => {
+                reject(request.error);
+            };
 
+            tx.oncomplete = () => {
+                db.close();
+                resolve(result);
+            };
+
+            tx.onerror = () => {
+                db.close();
+                reject(tx.error);
+            };
+
+            tx.onabort = () => {
+                db.close();
+                reject(tx.error || new Error("Database transaction aborted"));
+            };
+        });
     }
 
     const readAllUploads = () =>
@@ -262,35 +234,25 @@
     ============================ */
 
     function escapeHTML(value = "") {
-
         return String(value).replace(/[&<>"']/g, char => ({
-
             "&": "&amp;",
             "<": "&lt;",
             ">": "&gt;",
             '"': "&quot;",
             "'": "&#39;"
-
         })[char]);
-
     }
 
     function formatLikes(number) {
-
         if (number >= 1000000) {
-
             return (number / 1000000).toFixed(1) + "M";
-
         }
 
         if (number >= 1000) {
-
             return (number / 1000).toFixed(1) + "K";
-
         }
 
         return String(number);
-
     }
 
     /* ============================
@@ -298,51 +260,37 @@
     ============================ */
 
     function visibleVideos() {
-
         const query = $("searchInput").value.trim().toLowerCase();
 
         let list = [...videos];
 
         if (currentPage === "Liked") {
-
             list = list.filter(video => video.liked);
-
         }
 
         if (currentPage === "Saved") {
-
             list = list.filter(video => video.saved);
-
         }
 
         if (currentPage === "Following") {
-
             list = list.filter(video => video.following);
-
         }
 
         if (["Trending", "Music", "Gaming"].includes(currentPage)) {
-
             list = list.filter(video =>
                 video.topic.toLowerCase() === currentPage.toLowerCase()
             );
-
         }
 
         if (query) {
-
             list = list.filter(video =>
-
                 `${video.username} ${video.displayName} ${video.caption} ${video.topic}`
                     .toLowerCase()
                     .includes(query)
-
             );
-
         }
 
         return list;
-
     }
 
     /* ============================
@@ -350,7 +298,6 @@
     ============================ */
 
     function render() {
-
         const list = visibleVideos();
 
         feed.innerHTML = "";
@@ -364,17 +311,14 @@
         );
 
         list.forEach(video => {
-
             const card = document.createElement("article");
 
             card.className = "video-card";
-
             card.dataset.id = video.id;
 
             const source = video.objectUrl || video.src;
 
             card.innerHTML = `
-
                 <div class="video-main">
 
                     <div class="video-stage paused">
@@ -382,7 +326,10 @@
                         <video
                             src="${escapeHTML(source)}"
                             playsinline
-                            preload="metadata">
+                            webkit-playsinline
+                            preload="auto"
+                            loop
+                            disablepictureinpicture>
                         </video>
 
                         <div class="video-overlay-play">
@@ -521,77 +468,180 @@
                     }
 
                 </div>
-
             `;
 
             feed.appendChild(card);
-
         });
 
+        // Activate autoplay for all newly rendered videos
         setupVideoPlayback();
-
     }
 
     /* ============================
-       VIDEO PLAYBACK
+       SMART VIDEO PLAYBACK
     ============================ */
+
+    function pauseOtherVideos(currentVideo) {
+        document.querySelectorAll(".video-stage video").forEach(other => {
+            if (other !== currentVideo) {
+                other.pause();
+
+                other.closest(".video-stage")
+                    ?.classList.add("paused");
+            }
+        });
+    }
+
+    async function playVideo(video) {
+        const stage = video.closest(".video-stage");
+
+        pauseOtherVideos(video);
+
+        // Request sound ON
+        video.muted = false;
+        video.defaultMuted = false;
+        video.volume = 1;
+
+        try {
+            await video.play();
+
+            stage?.classList.remove("paused");
+
+        } catch (error) {
+            console.log("Video playback blocked:", error);
+
+            stage?.classList.add("paused");
+
+            if (!userHasInteracted) {
+                notify("Tap the video once to enable playback and sound.");
+            }
+        }
+    }
 
     function setupVideoPlayback() {
 
-        document.querySelectorAll(".video-stage video").forEach(video => {
+        // Prevent multiple active observers
+        if (videoObserver) {
+            videoObserver.disconnect();
+        }
 
-            video.addEventListener("click", () => {
+        videoObserver = new IntersectionObserver(entries => {
 
+            entries.forEach(entry => {
+
+                const video = entry.target;
                 const stage = video.closest(".video-stage");
 
-                if (video.paused) {
+                if (
+                    entry.isIntersecting &&
+                    entry.intersectionRatio >= 0.6
+                ) {
 
-                    document.querySelectorAll(".video-stage video").forEach(other => {
-
-                        if (other !== video) {
-
-                            other.pause();
-
-                            other.closest(".video-stage")
-                                ?.classList.add("paused");
-
-                        }
-
-                    });
-
-                    video.play()
-
-                        .then(() => stage.classList.remove("paused"))
-
-                        .catch(() => notify("Could not play this video."));
+                    playVideo(video);
 
                 } else {
 
                     video.pause();
 
-                    stage.classList.add("paused");
+                    stage?.classList.add("paused");
+
+                }
+
+            });
+
+        }, {
+            threshold: [0, 0.6, 1]
+        });
+
+        document.querySelectorAll(".video-stage video").forEach(video => {
+
+            video.playsInline = true;
+            video.preload = "auto";
+            video.loop = true;
+
+            videoObserver.observe(video);
+
+            // Add click listener only once per video element
+            if (video.dataset.playbackBound === "true") {
+                return;
+            }
+
+            video.dataset.playbackBound = "true";
+
+            video.addEventListener("click", async () => {
+
+                const stage = video.closest(".video-stage");
+
+                if (video.paused) {
+
+                    await playVideo(video);
+
+                } else {
+
+                    video.pause();
+
+                    stage?.classList.add("paused");
 
                 }
 
             });
 
             video.addEventListener("ended", () => {
+                stage?.classList.add("paused");
+            });
 
-                video.closest(".video-stage")
-                    ?.classList.add("paused");
-
+            video.addEventListener("error", () => {
+                console.error("Video could not load:", video.src);
             });
 
         });
-
     }
+
+    /* ============================
+       ENABLE SOUND AFTER INTERACTION
+    ============================ */
+
+    function unlockVideoSound() {
+
+        if (userHasInteracted) return;
+
+        userHasInteracted = true;
+
+        const visibleVideo = [...document.querySelectorAll(".video-stage video")]
+            .find(video => {
+
+                const rect = video.getBoundingClientRect();
+
+                const visibleHeight = Math.min(rect.bottom, window.innerHeight) -
+                    Math.max(rect.top, 0);
+
+                return visibleHeight >= rect.height * 0.6;
+
+            });
+
+        if (visibleVideo && visibleVideo.paused) {
+            playVideo(visibleVideo);
+        }
+    }
+
+    // A real visitor interaction can unlock audible playback
+    document.addEventListener(
+        "pointerdown",
+        unlockVideoSound,
+        { once: true, capture: true }
+    );
+
+    document.addEventListener(
+        "keydown",
+        unlockVideoSound,
+        { once: true }
+    );
 
     /* ============================
        LIKE BUTTON
     ============================ */
 
     function toggleLike(video) {
-
         video.liked = !video.liked;
 
         video.likes = Math.max(
@@ -600,7 +650,6 @@
         );
 
         saveInteractions();
-
         render();
 
         notify(
@@ -608,7 +657,6 @@
                 ? "❤️ Video liked!"
                 : "Like removed"
         );
-
     }
 
     /* ============================
@@ -616,11 +664,9 @@
     ============================ */
 
     function toggleSave(video) {
-
         video.saved = !video.saved;
 
         saveInteractions();
-
         render();
 
         notify(
@@ -628,7 +674,6 @@
                 ? "🔖 Video added to Saved!"
                 : "Video removed from Saved"
         );
-
     }
 
     /* ============================
@@ -636,7 +681,6 @@
     ============================ */
 
     function openComments(video) {
-
         activeCommentId = video.id;
 
         $("commentsTitle").textContent =
@@ -647,18 +691,15 @@
         $("commentsModal").classList.remove("hidden");
 
         $("commentInput").focus();
-
     }
 
     function renderComments(video) {
-
         const commentList = $("commentList");
 
         $("commentsTitle").textContent =
             `Comments (${video.comments.length})`;
 
         if (!video.comments.length) {
-
             commentList.innerHTML = `
                 <p class="creator-handle">
                     No comments yet. Be the first to comment!
@@ -666,11 +707,9 @@
             `;
 
             return;
-
         }
 
         commentList.innerHTML = video.comments.map(comment => `
-
             <div class="comment-item">
 
                 <b>@${escapeHTML(comment.username)}</b>
@@ -678,13 +717,10 @@
                 ${escapeHTML(comment.text)}
 
             </div>
-
         `).join("");
-
     }
 
     $("commentForm").addEventListener("submit", event => {
-
         event.preventDefault();
 
         const text = $("commentInput").value.trim();
@@ -696,13 +732,9 @@
         if (!text || !video) return;
 
         video.comments.push({
-
             username: "trippler",
-
             text: text,
-
             date: new Date().toISOString()
-
         });
 
         $("commentInput").value = "";
@@ -716,7 +748,6 @@
         $("commentsModal").classList.remove("hidden");
 
         notify("Comment posted!");
-
     });
 
     /* ============================
@@ -724,23 +755,17 @@
     ============================ */
 
     async function shareVideo(video) {
-
         const shareURL = new URL(window.location.href);
 
         shareURL.hash = "video-" + encodeURIComponent(video.id);
 
         const shareData = {
-
             title: "Watch on V-Tik",
-
             text: video.caption,
-
             url: shareURL.href
-
         };
 
         try {
-
             if (navigator.share && navigator.canShare?.(shareData)) {
 
                 await navigator.share(shareData);
@@ -768,29 +793,20 @@
                 input.remove();
 
                 if (copied) {
-
                     notify("Video link copied!");
-
                 } else {
-
                     notify("Could not copy the link.");
-
                 }
-
             }
 
         } catch (error) {
 
             if (error.name !== "AbortError") {
-
                 console.error(error);
-
                 notify("Could not share this video.");
-
             }
 
         }
-
     }
 
     /* ============================
@@ -798,11 +814,9 @@
     ============================ */
 
     function toggleFollow(video) {
-
         video.following = !video.following;
 
         saveInteractions();
-
         render();
 
         notify(
@@ -810,7 +824,6 @@
                 ? "Following creator!"
                 : "Unfollowed creator"
         );
-
     }
 
     /* ============================
@@ -824,9 +837,7 @@
         }
 
         if (video.objectUrl) {
-
             URL.revokeObjectURL(video.objectUrl);
-
         }
 
         videos = videos.filter(
@@ -834,17 +845,13 @@
         );
 
         if (!video.demo) {
-
             await removeUpload(video.id).catch(console.error);
-
         }
 
         saveInteractions();
-
         render();
 
         notify("Video deleted successfully!");
-
     }
 
     /* ============================
@@ -892,7 +899,6 @@
                 break;
 
         }
-
     });
 
     /* ============================
@@ -900,47 +906,33 @@
     ============================ */
 
     function showModal(id) {
-
         $(id).classList.remove("hidden");
-
     }
 
     function hideModal(id) {
-
         $(id).classList.add("hidden");
-
     }
 
     $("openUpload").addEventListener("click", () => {
-
         showModal("uploadModal");
-
     });
 
     $("mobileUpload").addEventListener("click", () => {
-
         showModal("uploadModal");
-
     });
 
     $("emptyUpload").addEventListener("click", () => {
-
         showModal("uploadModal");
-
     });
 
     $("topAvatar").addEventListener("click", () => {
-
         notify("Your profile can be connected to your account system.");
-
     });
 
     document.querySelectorAll("[data-close]").forEach(button => {
 
         button.addEventListener("click", () => {
-
             hideModal(button.dataset.close);
-
         });
 
     });
@@ -950,9 +942,7 @@
         modal.addEventListener("click", event => {
 
             if (event.target === modal) {
-
                 hideModal(modal.id);
-
             }
 
         });
@@ -962,11 +952,8 @@
     document.addEventListener("keydown", event => {
 
         if (event.key === "Escape") {
-
             hideModal("uploadModal");
-
             hideModal("commentsModal");
-
         }
 
     });
@@ -989,15 +976,11 @@
         const file = $("videoFile").files[0];
 
         if (!file) {
-
             return notify("Choose a video first.");
-
         }
 
         if (!file.type.startsWith("video/")) {
-
             return notify("Please choose a valid video file.");
-
         }
 
         const record = {
@@ -1047,11 +1030,8 @@
             notify("Your video was published!");
 
             window.scrollTo({
-
                 top: 0,
-
                 behavior: "smooth"
-
             });
 
         } catch (error) {
@@ -1133,11 +1113,8 @@
     $("scrollUp").addEventListener("click", () => {
 
         window.scrollBy({
-
             top: -window.innerHeight * 0.85,
-
             behavior: "smooth"
-
         });
 
     });
@@ -1145,11 +1122,8 @@
     $("scrollDown").addEventListener("click", () => {
 
         window.scrollBy({
-
             top: window.innerHeight * 0.85,
-
             behavior: "smooth"
-
         });
 
     });
@@ -1160,12 +1134,11 @@
 
     async function loadVideos() {
 
+        // Release previous upload URLs
         videos.forEach(video => {
 
             if (video.objectUrl) {
-
                 URL.revokeObjectURL(video.objectUrl);
-
             }
 
         });
@@ -1178,7 +1151,7 @@
 
         });
 
-        // Load uploaded videos.
+        // Restore uploaded videos
         const uploadedVideos = uploads.map(item => ({
 
             ...item,
@@ -1189,17 +1162,14 @@
 
         }));
 
-        // Add all five demo video cards.
+        // Combine uploaded videos and demo videos
         videos = [
 
             ...uploadedVideos,
 
             ...demoVideos.map(video => ({
-
                 ...video,
-
                 comments: []
-
             }))
 
         ];
@@ -1209,59 +1179,6 @@
         render();
 
     }
-    /* =================================
-   V-TIK AUTO PLAY SYSTEM
-================================= */
-
-const videoObserver = new IntersectionObserver((entries) => {
-
-    entries.forEach(entry => {
-
-        const video = entry.target;
-
-        if (entry.isIntersecting && entry.intersectionRatio >= 0.6) {
-
-            // Pause all other videos
-            document.querySelectorAll("video").forEach(otherVideo => {
-                if (otherVideo !== video) {
-                    otherVideo.pause();
-                }
-            });
-
-            // Play current video
-            video.muted = false;
-            video.volume = 1;
-
-            video.play().catch(error => {
-                console.log("Browser requires user interaction:", error);
-            });
-
-        } else {
-            video.pause();
-        }
-
-    });
-
-}, {
-    threshold: [0.6]
-});
-
-
-function activateVideoAutoPlay() {
-
-    document.querySelectorAll("video").forEach(video => {
-
-        videoObserver.observe(video);
-
-        video.playsInline = true;
-        video.preload = "auto";
-
-    });
-
-}
-
-// Run when page loads
-activateVideoAutoPlay();
 
     /* ============================
        START V-TIK
@@ -1270,3 +1187,4 @@ activateVideoAutoPlay();
     loadVideos();
 
 })();
+
