@@ -1080,4 +1080,59 @@
 
     loadVideos();
 
+/* =================================
+   V-TIK VIDEO SCROLL BUTTONS
+================================= */
+
+function scrollVideo(direction) {
+    const feed = document.getElementById("videoFeed");
+
+    if (!feed) {
+        console.error("Video feed not found!");
+        return;
+    }
+
+    const cards = feed.querySelectorAll(".video-card");
+
+    if (!cards.length) return;
+
+    const feedTop = feed.getBoundingClientRect().top;
+
+    let currentIndex = 0;
+    let smallestDistance = Infinity;
+
+    cards.forEach((card, index) => {
+        const distance = Math.abs(
+            card.getBoundingClientRect().top - feedTop
+        );
+
+        if (distance < smallestDistance) {
+            smallestDistance = distance;
+            currentIndex = index;
+        }
+    });
+
+    let nextIndex = currentIndex + direction;
+
+    nextIndex = Math.max(
+        0,
+        Math.min(nextIndex, cards.length - 1)
+    );
+
+    cards[nextIndex].scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+}
+
+/* CONNECT BUTTONS */
+
+document.querySelectorAll(".scroll-up, #scrollUp").forEach(button => {
+    button.addEventListener("click", () => scrollVideo(-1));
+});
+
+document.querySelectorAll(".scroll-down, #scrollDown").forEach(button => {
+    button.addEventListener("click", () => scrollVideo(1));
+});
+
 })();
