@@ -1085,19 +1085,53 @@ const demoVideos = [
 
     });
 
-    /* ============================
-       LOAD VIDEOS
-    ============================ */
+   /* ============================
+   LOAD VIDEOS
+============================ */
 
-    async function loadVideos() {
+async function loadVideos() {
 
-        videos.forEach(video => {
+    videos.forEach(video => {
 
-            if (video.objectUrl) {
-                URL.revokeObjectURL(video.objectUrl);
-            }
+        if (video.objectUrl) {
+            URL.revokeObjectURL(video.objectUrl);
+        }
 
-        });
+    });
+
+    const uploads = await readAllUploads().catch(error => {
+
+        console.error("Could not load videos:", error);
+
+        return [];
+
+    });
+
+    // Load uploaded videos.
+    const uploadedVideos = uploads.map(item => ({
+
+        ...item,
+
+        objectUrl: URL.createObjectURL(item.blob),
+
+        comments: item.comments || []
+
+    }));
+
+    // Add all demo video cards.
+    videos = [
+        ...uploadedVideos,
+        ...demoVideos.map(video => ({
+            ...video,
+            comments: []
+        }))
+    ];
+
+    restoreInteractions();
+
+    render();
+
+}
 
         const uploads = await readAllUploads().catch(error => {
 
