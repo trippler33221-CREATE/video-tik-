@@ -11,9 +11,31 @@
         return;
     }
 
+    /* =================================
+       USER AUTHENTICATION
+    ================================= */
+
+    let currentUser = null;
+
+    try {
+        currentUser = JSON.parse(
+            localStorage.getItem("loggedInUser") || "null"
+        );
+    } catch (error) {
+        currentUser = null;
+    }
+
+    if (!currentUser || !currentUser.id || !currentUser.username) {
+        window.location.href = "login.html";
+        return;
+    }
+
     const DB_NAME = "vtik-pro-media";
     const STORE = "videos";
-    const INTERACTION_KEY = "vtik-video-interactions";
+
+    // Each account has separate interactions.
+    const INTERACTION_KEY =
+        "vtik-video-interactions-" + currentUser.id;
 
     let videos = [];
     let activeCommentId = null;
@@ -23,9 +45,41 @@
     let userHasInteracted = false;
     let scrollTimer = null;
 
-    /* ============================
+    /* =================================
+       CURRENT USER
+    ================================= */
+
+    function getUsername() {
+        return currentUser.username;
+    }
+
+    function getDisplayName() {
+        return currentUser.displayName || currentUser.username;
+    }
+
+    function logout() {
+        if (!confirm("Are you sure you want to log out?")) {
+            return;
+        }
+
+        localStorage.removeItem("loggedInUser");
+
+        window.location.href = "login.html";
+    }
+
+    // Support different possible logout button IDs.
+    ["logoutButton", "logoutBtn", "topLogout"].forEach(id => {
+        $(id)?.addEventListener("click", logout);
+    });
+
+    // Clicking the avatar opens the account page.
+    $("topAvatar")?.addEventListener("click", () => {
+        window.location.href = "accounts.html";
+    });
+
+    /* =================================
        DEMO VIDEOS
-    ============================ */
+    ================================= */
 
     const demoVideos = [
         {
@@ -90,13 +144,17 @@
         }
     ];
 
-    /* ============================
+    /* =================================
        NOTIFICATIONS
-    ============================ */
+    ================================= */
 
     function notify(message) {
         const el = $("toast");
-        if (!el) return;
+
+        if (!el) {
+            console.log(message);
+            return;
+        }
 
         el.textContent = message;
         el.classList.add("show");
@@ -108,9 +166,9 @@
         }, 2400);
     }
 
-    /* ============================
+    /* =================================
        INTERACTION STORAGE
-    ============================ */
+    ================================= */
 
     function getInteractions() {
         try {
@@ -162,9 +220,9 @@
         });
     }
 
-    /* ============================
+    /* =================================
        INDEXEDDB
-    ============================ */
+    ================================= */
 
     function openDB() {
         return new Promise((resolve, reject) => {
@@ -185,8 +243,13 @@
                 }
             };
 
-            request.onsuccess = () => resolve(request.result);
-            request.onerror = () => reject(request.error);
+            request.onsuccess = () => {
+                resolve(request.result);
+            };
+
+            request.onerror = () => {
+                reject(request.error);
+            };
         });
     }
 
@@ -235,9 +298,9 @@
     const removeUpload = id =>
         dbAction("readwrite", store => store.delete(id));
 
-    /* ============================
+    /* =================================
        FORMATTING
-    ============================ */
+    ================================= */
 
     function escapeHTML(value = "") {
         return String(value).replace(/[&<>"']/g, char => ({
@@ -261,12 +324,13 @@
         return String(number);
     }
 
-    /* ============================
+    /* =================================
        FILTER VIDEOS
-    ============================ */
+    ================================= */
 
     function visibleVideos() {
-        const query = $("searchInput")?.value.trim().toLowerCase() || "";
+        const query =
+            $("searchInput")?.value.trim().toLowerCase() || "";
 
         let list = [...videos];
 
@@ -280,6 +344,12 @@
 
         if (currentPage === "Following") {
             list = list.filter(video => video.following);
+        }
+
+        if (currentPage === "My Videos") {
+            list = list.filter(video =>
+                video.ownerId === currentUser.id
+            );
         }
 
         if (["Trending", "Music", "Gaming"].includes(currentPage)) {
@@ -299,14 +369,116 @@
         return list;
     }
 
-    /* ============================
+    /* =================================
+       STOP ALL VIDEOS
+    ================================= */
+
+    function stopAllVideos() {
+        document.querySelectorAll(".video-stage video").forEach(video => {
+            video.pause();
+
+            video.closest(".video-stage")?.classList.add("paused");
+        });
+    }
+
+    function stopOtherVideos(currentVideo) {
+        document.querySelectorAll(".video-stage video").forEach(other => {
+            if (other !== currentVideo) {
+                other.pause();
+
+                other.closest(".video-stage")
+                    ?.classList.add("paused");
+            }
+        });
+    }
+
+    /* =================================
+       VIDEO PLAYBACK
+    ================================= */
+
+    async function playVideo(video) {
+        if (!video) return;
+
+        const stage = video.closest(".video-stage");
+
+        stopOtherVideos(video);
+
+        video.muted = !userHasInteracted;
+        video.volume = 1;
+
+        try {
+            await video.play();
+
+            stage?.classList.remove("paused");
+        } catch (error) {
+            stage?.classList.add("paused");
+
+            console.log("Playback waiting for interaction:", error);
+        }
+    }
+
+    function setupVideoPlayback() {
+        if (videoObserver) {
+            videoObserver.disconnect();
+        }
+
+        if (!("IntersectionObserver" in window)) {
+            return;
+        }
+
+        videoObserver = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                const video = entry.target;
+
+                if (
+                    entry.isIntersecting &&
+                    entry.intersectionRatio >= 0.75
+                ) {
+                    playVideo(video);
+                } else {
+                    video.pause();
+
+                    video.closest(".video-stage")
+                        ?.classList.add("paused");
+                }
+            });
+        }, {
+            threshold: [0, 0.25, 0.5, 0.75, 1]
+        });
+
+        document.querySelectorAll(".video-stage video").forEach(video => {
+            video.playsInline = true;
+            video.loop = true;
+
+            videoObserver.observe(video);
+
+            video.addEventListener("click", async () => {
+                userHasInteracted = true;
+
+                if (video.paused) {
+                    video.muted = false;
+                    await playVideo(video);
+                } else {
+                    video.pause();
+
+                    video.closest(".video-stage")
+                        ?.classList.add("paused");
+                }
+            });
+
+            video.addEventListener("error", () => {
+                console.error("Video could not load:", video.src);
+            });
+        });
+    }
+
+    /* =================================
        RENDER VIDEO FEED
-    ============================ */
+    ================================= */
 
     function render() {
         const list = visibleVideos();
 
-        // Pause old videos before rebuilding feed
         stopAllVideos();
 
         feed.innerHTML = "";
@@ -331,6 +503,9 @@
 
             const source = video.objectUrl || video.src;
 
+            const canDelete =
+                !video.demo && video.ownerId === currentUser.id;
+
             card.innerHTML = `
                 <div class="video-main">
 
@@ -354,7 +529,11 @@
                     <div class="video-meta">
 
                         <div class="creator-avatar">
-                            ${escapeHTML((video.username || "V").slice(0, 2).toUpperCase())}
+                            ${escapeHTML(
+                                (video.username || "V")
+                                    .slice(0, 2)
+                                    .toUpperCase()
+                            )}
                         </div>
 
                         <div class="creator-text">
@@ -429,12 +608,10 @@
                             ↗
                         </button>
 
-                        <span class="action-count">
-                            Share
-                        </span>
+                        <span class="action-count">Share</span>
                     </div>
 
-                    ${video.demo ? "" : `
+                    ${canDelete ? `
                         <div class="action-wrap">
                             <button
                                 class="action-button"
@@ -444,7 +621,7 @@
 
                             <span class="action-count">More</span>
                         </div>
-                    `}
+                    ` : ""}
 
                 </div>
             `;
@@ -455,117 +632,90 @@
         setupVideoPlayback();
     }
 
-    /* ============================
-       ONE VIDEO AT A TIME
-    ============================ */
+    /* =================================
+       SCROLLING ONE VIDEO AT A TIME
+    ================================= */
 
-    function stopAllVideos() {
-        document.querySelectorAll(".video-stage video").forEach(video => {
-            video.pause();
+    function getNearestCardIndex() {
+        const cards = [...feed.querySelectorAll(".video-card")];
 
-            const stage = video.closest(".video-stage");
-            stage?.classList.add("paused");
-        });
-    }
+        if (!cards.length) return -1;
 
-    async function playVideo(video) {
-        if (!video) return;
+        const feedTop = feed.getBoundingClientRect().top;
 
-        const stage = video.closest(".video-stage");
+        let nearestIndex = 0;
+        let smallestDistance = Infinity;
 
-        stopOtherVideos(video);
+        cards.forEach((card, index) => {
+            const distance = Math.abs(
+                card.getBoundingClientRect().top - feedTop
+            );
 
-        // Browsers require interaction before sound autoplay
-        video.muted = !userHasInteracted;
-        video.volume = 1;
-
-        try {
-            await video.play();
-            stage?.classList.remove("paused");
-        } catch (error) {
-            stage?.classList.add("paused");
-            console.log("Playback waiting for user interaction:", error);
-        }
-    }
-
-    function stopOtherVideos(currentVideo) {
-        document.querySelectorAll(".video-stage video").forEach(other => {
-            if (other !== currentVideo) {
-                other.pause();
-                other.closest(".video-stage")?.classList.add("paused");
+            if (distance < smallestDistance) {
+                smallestDistance = distance;
+                nearestIndex = index;
             }
         });
+
+        return nearestIndex;
     }
 
-    function setupVideoPlayback() {
-        if (videoObserver) {
-            videoObserver.disconnect();
+    function scrollVideo(direction) {
+        const cards = [...feed.querySelectorAll(".video-card")];
+
+        if (!cards.length) {
+            notify("No videos available.");
+            return;
         }
 
-        videoObserver = new IntersectionObserver(entries => {
-            entries.forEach(entry => {
-                const video = entry.target;
+        const currentIndex = getNearestCardIndex();
 
-                if (
-                    entry.isIntersecting &&
-                    entry.intersectionRatio >= 0.75
-                ) {
-                    playVideo(video);
-                } else {
-                    video.pause();
-                    video.closest(".video-stage")?.classList.add("paused");
-                }
-            });
-        }, {
-            threshold: [0, 0.25, 0.5, 0.75, 1]
-        });
+        const nextIndex = Math.max(
+            0,
+            Math.min(cards.length - 1, currentIndex + direction)
+        );
 
-        document.querySelectorAll(".video-stage video").forEach(video => {
-            video.playsInline = true;
-            video.loop = true;
+        const feedTop = feed.getBoundingClientRect().top;
 
-            videoObserver.observe(video);
+        const targetPosition =
+            feed.scrollTop +
+            cards[nextIndex].getBoundingClientRect().top -
+            feedTop;
 
-            video.addEventListener("click", async () => {
-                userHasInteracted = true;
-
-                if (video.paused) {
-                    video.muted = false;
-                    await playVideo(video);
-                } else {
-                    video.pause();
-                    video.closest(".video-stage")?.classList.add("paused");
-                }
-            });
-
-            video.addEventListener("error", () => {
-                console.error("Video could not load:", video.src);
-            });
+        feed.scrollTo({
+            top: targetPosition,
+            behavior: "smooth"
         });
     }
 
-    /* ============================
-       SCROLL SNAP
-    ============================ */
+    $("scrollUp")?.addEventListener("click", () => {
+        scrollVideo(-1);
+    });
+
+    $("scrollDown")?.addEventListener("click", () => {
+        scrollVideo(1);
+    });
+
+    document.querySelectorAll(".scroll-up").forEach(button => {
+        button.addEventListener("click", () => scrollVideo(-1));
+    });
+
+    document.querySelectorAll(".scroll-down").forEach(button => {
+        button.addEventListener("click", () => scrollVideo(1));
+    });
 
     function enableOneVideoScrolling() {
-        // Settle scrolling on one complete video card
         feed.style.scrollSnapType = "y mandatory";
 
-        feed.querySelectorAll(".video-card").forEach(card => {
-            card.style.scrollSnapAlign = "start";
-            card.style.scrollSnapStop = "always";
-        });
-
-        // Pause videos when scrolling starts.
         feed.addEventListener("scroll", () => {
             clearTimeout(scrollTimer);
 
             stopAllVideos();
 
-            // Wait until scrolling settles.
             scrollTimer = setTimeout(() => {
-                const cards = [...feed.querySelectorAll(".video-card")];
+                const cards = [
+                    ...feed.querySelectorAll(".video-card")
+                ];
 
                 let bestCard = null;
                 let bestVisibility = 0;
@@ -573,8 +723,10 @@
                 cards.forEach(card => {
                     const rect = card.getBoundingClientRect();
 
-                    const visibleTop = Math.max(rect.top, 0);
-                    const visibleBottom = Math.min(rect.bottom, window.innerHeight);
+                    const feedRect = feed.getBoundingClientRect();
+
+                    const visibleTop = Math.max(rect.top, feedRect.top);
+                    const visibleBottom = Math.min(rect.bottom, feedRect.bottom);
 
                     const visibleHeight = Math.max(
                         0,
@@ -599,23 +751,24 @@
         }, { passive: true });
     }
 
-    /* ============================
+    /* =================================
        SOUND UNLOCK
-    ============================ */
+    ================================= */
 
     function unlockVideoSound() {
         userHasInteracted = true;
 
-        const visibleVideo = [...document.querySelectorAll(".video-stage video")]
-            .find(video => {
-                const rect = video.getBoundingClientRect();
+        const visibleVideo = [
+            ...document.querySelectorAll(".video-stage video")
+        ].find(video => {
+            const rect = video.getBoundingClientRect();
 
-                const visibleHeight =
-                    Math.min(rect.bottom, window.innerHeight) -
-                    Math.max(rect.top, 0);
+            const visibleHeight =
+                Math.min(rect.bottom, window.innerHeight) -
+                Math.max(rect.top, 0);
 
-                return visibleHeight >= rect.height * 0.6;
-            });
+            return visibleHeight >= rect.height * 0.6;
+        });
 
         if (visibleVideo) {
             visibleVideo.muted = false;
@@ -635,9 +788,9 @@
         once: true
     });
 
-    /* ============================
+    /* =================================
        LIKE
-    ============================ */
+    ================================= */
 
     function toggleLike(video) {
         video.liked = !video.liked;
@@ -653,9 +806,9 @@
         notify(video.liked ? "❤️ Video liked!" : "Like removed");
     }
 
-    /* ============================
-       SAVE
-    ============================ */
+    /* =================================
+       SAVE VIDEO
+    ================================= */
 
     function toggleSave(video) {
         video.saved = !video.saved;
@@ -670,27 +823,33 @@
         );
     }
 
-    /* ============================
+    /* =================================
        COMMENTS
-    ============================ */
+    ================================= */
 
     function openComments(video) {
         activeCommentId = video.id;
 
-        $("commentsTitle").textContent =
-            `Comments (${video.comments.length})`;
+        if ($("commentsTitle")) {
+            $("commentsTitle").textContent =
+                `Comments (${video.comments.length})`;
+        }
 
         renderComments(video);
 
-        $("commentsModal").classList.remove("hidden");
-        $("commentInput").focus();
+        $("commentsModal")?.classList.remove("hidden");
+        $("commentInput")?.focus();
     }
 
     function renderComments(video) {
         const commentList = $("commentList");
 
-        $("commentsTitle").textContent =
-            `Comments (${video.comments.length})`;
+        if (!commentList) return;
+
+        if ($("commentsTitle")) {
+            $("commentsTitle").textContent =
+                `Comments (${video.comments.length})`;
+        }
 
         if (!video.comments.length) {
             commentList.innerHTML = `
@@ -709,10 +868,10 @@
         `).join("");
     }
 
-    $("commentForm").addEventListener("submit", event => {
+    $("commentForm")?.addEventListener("submit", event => {
         event.preventDefault();
 
-        const text = $("commentInput").value.trim();
+        const text = $("commentInput")?.value.trim();
 
         const video = videos.find(
             item => item.id === activeCommentId
@@ -721,7 +880,7 @@
         if (!text || !video) return;
 
         video.comments.push({
-            username: "trippler",
+            username: getUsername(),
             text,
             date: new Date().toISOString()
         });
@@ -730,21 +889,19 @@
 
         saveInteractions();
         renderComments(video);
-        render();
-
-        $("commentsModal").classList.remove("hidden");
 
         notify("Comment posted!");
     });
 
-    /* ============================
+    /* =================================
        SHARE
-    ============================ */
+    ================================= */
 
     async function shareVideo(video) {
         const shareURL = new URL(window.location.href);
 
-        shareURL.hash = "video-" + encodeURIComponent(video.id);
+        shareURL.hash =
+            "video-" + encodeURIComponent(video.id);
 
         const shareData = {
             title: "Watch on V-Tik",
@@ -753,22 +910,34 @@
         };
 
         try {
-            if (navigator.share && navigator.canShare?.(shareData)) {
+            if (
+                navigator.share &&
+                navigator.canShare?.(shareData)
+            ) {
                 await navigator.share(shareData);
                 notify("Share menu opened!");
-            } else if (navigator.clipboard && window.isSecureContext) {
+            } else if (
+                navigator.clipboard &&
+                window.isSecureContext
+            ) {
                 await navigator.clipboard.writeText(shareURL.href);
                 notify("Video link copied!");
             } else {
                 const input = document.createElement("textarea");
+
                 input.value = shareURL.href;
                 document.body.appendChild(input);
                 input.select();
 
                 const copied = document.execCommand("copy");
+
                 input.remove();
 
-                notify(copied ? "Video link copied!" : "Could not copy link.");
+                notify(
+                    copied
+                        ? "Video link copied!"
+                        : "Could not copy link."
+                );
             }
         } catch (error) {
             if (error.name !== "AbortError") {
@@ -777,9 +946,9 @@
         }
     }
 
-    /* ============================
+    /* =================================
        FOLLOW
-    ============================ */
+    ================================= */
 
     function toggleFollow(video) {
         video.following = !video.following;
@@ -794,11 +963,17 @@
         );
     }
 
-    /* ============================
-       DELETE
-    ============================ */
+    /* =================================
+       DELETE VIDEO
+    ================================= */
 
     async function deleteVideo(video) {
+        // Users can only delete videos they own.
+        if (video.ownerId !== currentUser.id) {
+            notify("You can only delete your own videos.");
+            return;
+        }
+
         if (!confirm("Are you sure you want to delete this video?")) {
             return;
         }
@@ -809,9 +984,9 @@
 
         videos = videos.filter(item => item.id !== video.id);
 
-        if (!video.demo) {
-            await removeUpload(video.id).catch(console.error);
-        }
+        await removeUpload(video.id).catch(error => {
+            console.error(error);
+        });
 
         saveInteractions();
         render();
@@ -819,9 +994,9 @@
         notify("Video deleted successfully!");
     }
 
-    /* ============================
-       FEED BUTTON EVENTS
-    ============================ */
+    /* =================================
+       VIDEO BUTTON EVENTS
+    ================================= */
 
     feed.addEventListener("click", async event => {
         const button = event.target.closest("[data-action]");
@@ -863,9 +1038,9 @@
         }
     });
 
-    /* ============================
+    /* =================================
        MODALS
-    ============================ */
+    ================================= */
 
     function showModal(id) {
         $(id)?.classList.remove("hidden");
@@ -875,14 +1050,16 @@
         $(id)?.classList.add("hidden");
     }
 
-    $("openUpload").addEventListener("click", () => showModal("uploadModal"));
+    $("openUpload")?.addEventListener("click", () => {
+        showModal("uploadModal");
+    });
 
-    $("mobileUpload").addEventListener("click", () => showModal("uploadModal"));
+    $("mobileUpload")?.addEventListener("click", () => {
+        showModal("uploadModal");
+    });
 
-    $("emptyUpload").addEventListener("click", () => showModal("uploadModal"));
-
-    $("topAvatar").addEventListener("click", () => {
-        notify("Your profile can be connected to your account system.");
+    $("emptyUpload")?.addEventListener("click", () => {
+        showModal("uploadModal");
     });
 
     document.querySelectorAll("[data-close]").forEach(button => {
@@ -906,19 +1083,21 @@
         }
     });
 
-    /* ============================
+    /* =================================
        UPLOAD VIDEO
-    ============================ */
+    ================================= */
 
-    $("videoFile").addEventListener("change", () => {
+    $("videoFile")?.addEventListener("change", () => {
         const file = $("videoFile").files[0];
 
-        $("selectedFile").textContent =
-            file ? file.name : "No video selected";
+        if ($("selectedFile")) {
+            $("selectedFile").textContent =
+                file ? file.name : "No video selected";
+        }
     });
 
-    $("publishVideo").addEventListener("click", async () => {
-        const file = $("videoFile").files[0];
+    $("publishVideo")?.addEventListener("click", async () => {
+        const file = $("videoFile")?.files[0];
 
         if (!file) {
             return notify("Choose a video first.");
@@ -932,13 +1111,16 @@
             id: "upload-" + Date.now() + "-" +
                 Math.random().toString(16).slice(2),
 
-            username: "trippler",
-            displayName: "V-Tik creator",
+            username: getUsername(),
+            displayName: getDisplayName(),
 
-            caption: $("videoCaption").value.trim() ||
+            // Ownership connects the video to its creator.
+            ownerId: currentUser.id,
+
+            caption: $("videoCaption")?.value.trim() ||
                 "New video on V-Tik",
 
-            topic: $("videoTopic").value,
+            topic: $("videoTopic")?.value || "Trending",
 
             likes: 0,
             comments: [],
@@ -948,55 +1130,70 @@
             liked: false,
             saved: false,
 
-            blob: file
+            blob: file,
+            createdAt: new Date().toISOString()
         };
 
         try {
             await saveUpload(record);
+
             await loadVideos();
 
             $("videoFile").value = "";
-            $("videoCaption").value = "";
-            $("selectedFile").textContent = "No video selected";
+
+            if ($("videoCaption")) {
+                $("videoCaption").value = "";
+            }
+
+            if ($("selectedFile")) {
+                $("selectedFile").textContent = "No video selected";
+            }
 
             hideModal("uploadModal");
 
             notify("Your video was published!");
 
-            window.scrollTo({
+            feed.scrollTo({
                 top: 0,
                 behavior: "smooth"
             });
 
         } catch (error) {
             console.error(error);
+
             notify("Could not save this video. Try a smaller file.");
         }
     });
 
-    /* ============================
+    /* =================================
        SEARCH
-    ============================ */
+    ================================= */
 
-    $("searchInput").addEventListener("input", render);
+    $("searchInput")?.addEventListener("input", render);
 
-    $("clearSearch").addEventListener("click", () => {
+    $("clearSearch")?.addEventListener("click", () => {
         $("searchInput").value = "";
+
         render();
+
         $("searchInput").focus();
     });
 
-    /* ============================
+    /* =================================
        NAVIGATION
-    ============================ */
+    ================================= */
 
     document.querySelectorAll("[data-page]").forEach(button => {
         button.addEventListener("click", () => {
             currentPage = button.dataset.page;
 
             if (currentPage === "Profile") {
-                currentPage = "Home";
-                notify("Your profile can be connected to your account page.");
+                window.location.href = "accounts.html";
+                return;
+            }
+
+            if (currentPage === "My Videos") {
+                currentPage = "My Videos";
             }
 
             document.querySelectorAll("[data-page]").forEach(item => {
@@ -1007,37 +1204,30 @@
             });
 
             render();
+
+            feed.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
         });
     });
 
     document.querySelectorAll("[data-topic]").forEach(button => {
         button.addEventListener("click", () => {
             currentPage = button.dataset.topic;
+
             render();
+
+            feed.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
         });
     });
 
-    /* ============================
-       SCROLL BUTTONS
-    ============================ */
-
-    $("scrollUp").addEventListener("click", () => {
-        window.scrollBy({
-            top: -window.innerHeight * 0.85,
-            behavior: "smooth"
-        });
-    });
-
-    $("scrollDown").addEventListener("click", () => {
-        window.scrollBy({
-            top: window.innerHeight * 0.85,
-            behavior: "smooth"
-        });
-    });
-
-    /* ============================
-       LOAD VIDEOS
-    ============================ */
+    /* =================================
+       LOAD USER VIDEOS
+    ================================= */
 
     async function loadVideos() {
         stopAllVideos();
@@ -1053,7 +1243,12 @@
             return [];
         });
 
-        const uploadedVideos = uploads.map(item => ({
+        // Only show videos belonging to this account.
+        const myUploads = uploads.filter(item =>
+            item.ownerId === currentUser.id && item.blob
+        );
+
+        const uploadedVideos = myUploads.map(item => ({
             ...item,
             objectUrl: URL.createObjectURL(item.blob),
             comments: item.comments || []
@@ -1072,67 +1267,15 @@
         render();
     }
 
-    /* ============================
+    /* =================================
        START V-TIK
-    ============================ */
+    ================================= */
 
     enableOneVideoScrolling();
 
-    loadVideos();
-
-/* =================================
-   V-TIK VIDEO SCROLL BUTTONS
-================================= */
-
-function scrollVideo(direction) {
-    const feed = document.getElementById("videoFeed");
-
-    if (!feed) {
-        console.error("Video feed not found!");
-        return;
-    }
-
-    const cards = feed.querySelectorAll(".video-card");
-
-    if (!cards.length) return;
-
-    const feedTop = feed.getBoundingClientRect().top;
-
-    let currentIndex = 0;
-    let smallestDistance = Infinity;
-
-    cards.forEach((card, index) => {
-        const distance = Math.abs(
-            card.getBoundingClientRect().top - feedTop
-        );
-
-        if (distance < smallestDistance) {
-            smallestDistance = distance;
-            currentIndex = index;
-        }
+    loadVideos().catch(error => {
+        console.error("V-Tik could not start:", error);
+        notify("Could not load V-Tik videos.");
     });
-
-    let nextIndex = currentIndex + direction;
-
-    nextIndex = Math.max(
-        0,
-        Math.min(nextIndex, cards.length - 1)
-    );
-
-    cards[nextIndex].scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-    });
-}
-
-/* CONNECT BUTTONS */
-
-document.querySelectorAll(".scroll-up, #scrollUp").forEach(button => {
-    button.addEventListener("click", () => scrollVideo(-1));
-});
-
-document.querySelectorAll(".scroll-down, #scrollDown").forEach(button => {
-    button.addEventListener("click", () => scrollVideo(1));
-});
 
 })();
