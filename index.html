@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -39,6 +38,25 @@
   </header>
 
   <div class="app-shell">
+
+    <aside class="sidebar">
+      <div class="side-label">MENU</div>
+      <button class="nav-item active" data-page="home">⌂ <span>For You</span></button>
+      <button class="nav-item" data-page="following">♡ <span>Following</span></button>
+      <button class="nav-item" data-page="explore">◈ <span>Explore</span></button>
+      <button class="nav-item" data-page="saved">▣ <span>Saved videos</span></button>
+
+      <div class="side-label side-gap">YOUR ACCOUNT</div>
+      <button class="nav-item" data-page="profile">◉ <span>My Profile</span></button>
+      <button class="nav-item" id="sidebarCreate">＋ <span>Upload video</span></button>
+
+      <div class="sidebar-bottom">
+        <div class="mini-brand">V-TIK PRO</div>
+        <p>Watch it. Create it. Share it.</p>
+        <small>© 2026 V-Tik Pro</small>
+      </div>
+    </aside>
+
     <main class="main-content">
       <div class="feed-top">
         <div>
@@ -100,28 +118,6 @@
       </section>
     </aside>
   </div>
-
-    <aside class="right-sidebar">
-      <section class="right-card creator-card">
-        <p class="eyebrow">CREATOR STUDIO</p>
-        <h3>Share your moment.</h3>
-        <p>Upload a video and let the V-Tik community watch it.</p>
-        <button class="upload-top full-btn" id="rightUpload">＋ Create video</button>
-      </section>
-
-      <section class="right-card">
-        <h3>Trending topics</h3>
-        <div class="trend"><span>#</span><div><b>#ViralVideos</b><small>Trending now</small></div></div>
-        <div class="trend"><span>#</span><div><b>#Music</b><small>Popular topic</small></div></div>
-        <div class="trend"><span>#</span><div><b>#Lifestyle</b><small>Explore videos</small></div></div>
-        <div class="trend"><span>#</span><div><b>#Comedy</b><small>Popular topic</small></div></div>
-      </section>
-
-      <section class="right-card">
-        <h3>Welcome to V-Tik Pro</h3>
-        <p>Discover creators, enjoy short videos and share your creativity.</p>
-      </section>
-    </aside>
 
   <!-- UPLOAD MODAL -->
   <div class="modal hidden" id="uploadModal">
