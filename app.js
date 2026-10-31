@@ -12,12 +12,12 @@
   // DEMO VIDEOS
   const seedPosts = [
     {
-      id: "fik logogo (1).mp4",
-      username: "fik logogo (1).mp4",
-      displayName: "fik logogo (1).mp4",
-      caption: "Formula One donut action 🏎️ #F1 #motorsport",
-      src: "fik logogo (1).mp4",
-      demo: true
+  id: "demo-f1",
+  username: "tripplerr",
+  displayName: "TRIPPLE R",
+  caption: "Welcome to V-Tik! 🎬 Watch and enjoy.",
+  src: "videos/fik-logogo-1.mp4",
+  demo: true
     },
     {
       id: "demo-travel",
