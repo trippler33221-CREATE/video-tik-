@@ -85,3 +85,16 @@ select{margin-top:4px}
 @media(max-width:1000px){.topbar{grid-template-columns:170px minmax(180px,1fr) auto;gap:15px}.app-layout{grid-template-columns:185px minmax(0,1fr) 48px;gap:15px}.video-stage{height:68vh}}
 @media(max-width:700px){.topbar{height:64px;grid-template-columns:auto minmax(90px,1fr) auto;gap:10px;padding:0 12px}.brand{font-size:17px}.brand-mark{width:34px;height:34px}.search-box{height:39px;padding:0 9px}.search-box input{font-size:11px}.create-button{padding:11px 12px}.create-button span{display:none}.notification-button{display:none}.top-actions{gap:6px}.icon-button,.avatar{width:36px;height:36px}.app-layout{display:block;padding:12px 10px 85px}.left-sidebar{display:none}.feed-area{max-width:560px}.feed-heading{margin:4px 3px 12px}.video-card{grid-template-columns:minmax(0,1fr) 42px;padding:8px;gap:7px;border-radius:14px}.video-stage{height:68vh;min-height:350px;max-height:650px}.video-actions{gap:13px}.action-button{width:38px;height:38px}.scroll-controls{position:fixed;right:9px;top:42%;z-index:20;padding:0}.scroll-controls button{width:37px;height:37px;background:#252630eF}.mobile-nav{position:fixed;z-index:35;bottom:0;left:0;right:0;height:65px;display:flex;justify-content:space-around;align-items:center;background:#101117f5;border-top:1px solid #2b2c36;padding-bottom:env(safe-area-inset-bottom);backdrop-filter:blur(15px)}.mobile-nav button{display:grid;justify-items:center;gap:3px;border:0;background:none;color:#aeb0ba;font-size:9px}.mobile-nav button span{font-size:19px}.mobile-nav .mobile-active{color:var(--pink)}.mobile-nav .mobile-create{width:42px;height:34px;display:grid;place-items:center;border-radius:10px;background:var(--pink);color:white;font-size:25px}.sidebar-footer{display:none}}
 @media(max-width:390px){.video-stage{height:61vh;min-height:300px}.video-card{grid-template-columns:minmax(0,1fr) 38px}.action-button{width:34px;height:34px}}
+/* SHOW SCROLL BUTTONS ONLY ON LARGE SCREENS */
+@media screen and (max-width: 768px) {
+    .right-sidebar.scroll-controls {
+        display: none !important;
+    }
+}
+
+/* SHOW ON DESKTOP AND LARGE DEVICES */
+@media screen and (min-width: 769px) {
+    .right-sidebar.scroll-controls {
+        display: flex !important;
+    }
+}
