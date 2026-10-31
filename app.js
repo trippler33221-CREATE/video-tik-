@@ -1209,6 +1209,59 @@
         render();
 
     }
+    /* =================================
+   V-TIK AUTO PLAY SYSTEM
+================================= */
+
+const videoObserver = new IntersectionObserver((entries) => {
+
+    entries.forEach(entry => {
+
+        const video = entry.target;
+
+        if (entry.isIntersecting && entry.intersectionRatio >= 0.6) {
+
+            // Pause all other videos
+            document.querySelectorAll("video").forEach(otherVideo => {
+                if (otherVideo !== video) {
+                    otherVideo.pause();
+                }
+            });
+
+            // Play current video
+            video.muted = false;
+            video.volume = 1;
+
+            video.play().catch(error => {
+                console.log("Browser requires user interaction:", error);
+            });
+
+        } else {
+            video.pause();
+        }
+
+    });
+
+}, {
+    threshold: [0.6]
+});
+
+
+function activateVideoAutoPlay() {
+
+    document.querySelectorAll("video").forEach(video => {
+
+        videoObserver.observe(video);
+
+        video.playsInline = true;
+        video.preload = "auto";
+
+    });
+
+}
+
+// Run when page loads
+activateVideoAutoPlay();
 
     /* ============================
        START V-TIK
