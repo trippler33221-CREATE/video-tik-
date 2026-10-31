@@ -1,141 +1,300 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#09090d">
-  <title>V-Tik — Watch, Create & Share</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#09090d">
+
+    <title>V-Tik — Watch, Create & Share</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-  <header class="topbar">
-    <a class="brand" href="#" aria-label="V-Tik home"><span class="brand-mark">V</span><span class="brand-word">TIK</span></a>
+
+<header class="topbar">
+
+    <a class="brand" href="index.html" aria-label="V-Tik home">
+        <span class="brand-mark">V</span>
+        <span class="brand-word">TIK</span>
+    </a>
+
     <label class="search-box">
-      <span aria-hidden="true">⌕</span>
-      <input id="searchInput" type="search" placeholder="Search videos..." autocomplete="off">
-      <button id="clearSearch" type="button" aria-label="Clear search">×</button>
-      
-<div class="top-actions">
+        <span aria-hidden="true">⌕</span>
+        <input id="searchInput" type="search"
+               placeholder="Search videos..." autocomplete="off">
+        <button id="clearSearch" type="button"
+                aria-label="Clear search">×</button>
+    </label>
 
-    <a href="login.html" class="auth-btn login-btn">
-        Log In
-    </a>
+    <div class="top-actions">
 
-    <a href="signup.html" class="auth-btn signup-btn">
-        Sign Up
-    </a>
+        <a href="login.html" class="auth-btn login-btn">
+            Log In
+        </a>
 
-    <div class="search-box">
-        <input
-            type="search"
-            id="searchInput"
-            placeholder="Search V-Tik"
-        >
+        <a href="signup.html" class="auth-btn signup-btn">
+            Sign Up
+        </a>
+
+        <button class="create-button" id="openUpload">
+            ＋ <span>Create</span>
+        </button>
+
+        <button class="icon-button notification-button"
+                id="notificationsButton"
+                title="Notifications" aria-label="Notifications">
+            ♧
+        </button>
+
+        <button class="avatar top-avatar" id="topAvatar"
+                title="Open profile">TR</button>
+
     </div>
+</header>
 
-    <button id="createTop" class="create-btn">
-        + Create
-    </button>
+
+<div class="app-layout">
+
+    <aside class="left-sidebar">
+
+        <nav class="main-nav" aria-label="Main navigation">
+
+            <button class="nav-item active" data-page="Home">
+                <span>⌂</span>Home
+            </button>
+
+            <button class="nav-item" data-page="Discover">
+                <span>⌕</span>Discover
+            </button>
+
+            <button class="nav-item" data-page="Following">
+                <span>♧</span>Following
+            </button>
+
+            <button class="nav-item" data-page="Liked">
+                <span>♡</span>Liked
+            </button>
+
+            <button class="nav-item" data-page="Saved">
+                <span>▤</span>Saved
+            </button>
+
+        </nav>
+
+        <p class="sidebar-heading">EXPLORE</p>
+
+        <nav class="explore-nav" aria-label="Explore topics">
+
+            <button class="nav-item" data-topic="Trending">
+                <span>🔥</span>Trending
+            </button>
+
+            <button class="nav-item" data-topic="Music">
+                <span>♫</span>Music
+            </button>
+
+            <button class="nav-item" data-topic="Gaming">
+                <span>🎮</span>Gaming
+            </button>
+
+        </nav>
+
+        <div class="sidebar-account">
+            <button class="avatar small" id="sidebarAvatar">
+                TR
+            </button>
+
+            <button id="logoutButton" type="button">
+                Log Out
+            </button>
+        </div>
+
+        <footer class="sidebar-footer">
+            <div class="footer-links">
+                <a href="#">About</a>
+                <a href="#">Privacy</a>
+                <a href="#">Terms</a>
+            </div>
+
+            <p>© 2026 V-Tik</p>
+        </footer>
+
+    </aside>
+
+
+    <main class="feed-area">
+
+        <div class="feed-heading">
+            <span id="feedLabel">For You</span>
+            <span class="feed-subtitle">
+                Discover short videos
+            </span>
+        </div>
+
+        <section id="videoFeed"
+                 class="video-feed"
+                 aria-live="polite">
+        </section>
+
+        <section id="emptyState" class="empty-state hidden">
+
+            <div class="empty-symbol">▶</div>
+
+            <h2>No videos found</h2>
+
+            <p>Try another search or upload the first video.</p>
+
+            <button class="create-button" id="emptyUpload">
+                ＋ Upload video
+            </button>
+
+        </section>
+
+    </main>
+
+
+    <aside class="scroll-controls" aria-label="Feed controls">
+
+        <button id="scrollUp" title="Previous video"
+                aria-label="Scroll up">↑</button>
+
+        <button id="scrollDown" title="Next video"
+                aria-label="Scroll down">↓</button>
+
+    </aside>
 
 </div>
 
-    </label>
-    <div class="top-actions">
-      <button class="create-button" id="openUpload">＋ <span>Create</span></button>
-      <button class="icon-button notification-button" id="notificationsButton" title="Notifications" aria-label="Notifications">♧</button>
-      <button class="avatar top-avatar" id="topAvatar" title="Open profile">TR</button>
-    </div>
-  </header>
 
-  <div class="app-layout">
-    <aside class="left-sidebar">
-      <nav class="main-nav" aria-label="Main navigation">
-        <button class="nav-item active" data-page="Home"><span>⌂</span>Home</button>
-        <button class="nav-item" data-page="Discover"><span>⌕</span>Discover</button>
-        <button class="nav-item" data-page="Following"><span>♧</span>Following</button>
-        <button class="nav-item" data-page="Liked"><span>♡</span>Liked</button>
-        <button class="nav-item" data-page="Saved"><span>▤</span>Saved</button>
-      </nav>
-      <p class="sidebar-heading">EXPLORE</p>
-      <nav class="explore-nav" aria-label="Explore topics">
-        <button class="nav-item" data-topic="Trending"><span>🔥</span>Trending</button>
-        <button class="nav-item" data-topic="Music"><span>♫</span>Music</button>
-        <button class="nav-item" data-topic="Gaming"><span>🎮</span>Gaming</button>
-        <button id="topAvatar" class="avatar small">
-    TR
-</button>
+<nav class="mobile-nav" aria-label="Mobile navigation">
 
-<button id="logoutButton" type="button">
-    Log Out
-</button>
-      </nav>
-      <footer class="sidebar-footer">
-        <div class="footer-links"><a href="#">About</a><a href="#">Privacy</a><a href="#">Terms</a></div>
-        <p>© 2026 V-Tik</p>
-      </footer>
-    </aside>
+    <button class="mobile-active" data-page="Home">
+        <span>⌂</span>Home
+    </button>
 
-    <main class="feed-area">
-      <div class="feed-heading">
-        <span id="feedLabel">For You</span>
-        <span class="feed-subtitle">Discover short videos</span>
-      </div>
-      <section id="videoFeed" class="video-feed" aria-live="polite"></section>
-      <section id="emptyState" class="empty-state hidden">
-        <div class="empty-symbol">▶</div>
-        <h2>No videos found</h2>
-        <p>Try another search or upload the first video.</p>
-        <button class="create-button" id="emptyUpload">＋ Upload video</button>
-      </section>
-    </main>
+    <button data-page="Discover">
+        <span>⌕</span>Discover
+    </button>
 
-    <aside class="scroll-controls" aria-label="Feed controls">
-      <button id="scrollUp" title="Previous video" aria-label="Scroll up">↑</button>
-      <button id="scrollDown" title="Next video" aria-label="Scroll down">↓</button>
-    </aside>
-  </div>
+    <button id="mobileUpload" class="mobile-create"
+            aria-label="Create video">＋</button>
 
-  <nav class="mobile-nav" aria-label="Mobile navigation">
-    <button class="mobile-active" data-page="Home"><span>⌂</span>Home</button>
-    <button data-page="Discover"><span>⌕</span>Discover</button>
-    <button id="mobileUpload" class="mobile-create" aria-label="Create video">＋</button>
-    <button data-page="Saved"><span>▤</span>Saved</button>
-    <button data-page="Profile"><span>◉</span>Profile</button>
-  </nav>
+    <button data-page="Saved">
+        <span>▤</span>Saved
+    </button>
 
-  <div class="modal hidden" id="uploadModal" role="dialog" aria-modal="true" aria-labelledby="uploadTitle">
+    <button data-page="Profile">
+        <span>◉</span>Profile
+    </button>
+
+</nav>
+
+
+<!-- UPLOAD MODAL -->
+
+<div class="modal hidden" id="uploadModal"
+     role="dialog" aria-modal="true"
+     aria-labelledby="uploadTitle">
+
     <div class="modal-panel">
-      <button class="modal-close" data-close="uploadModal" aria-label="Close">×</button>
-      <p class="eyebrow">CREATOR STUDIO</p>
-      <h2 id="uploadTitle">Upload a video</h2>
-      <label class="file-drop" for="videoFile"><span class="upload-arrow">↑</span><b>Choose a video</b><small>MP4, WebM or MOV</small></label>
-      <input id="videoFile" type="file" accept="video/*" hidden>
-      <p id="selectedFile" class="selected-file">No video selected</p>
-      <label class="field-label" for="videoCaption">Caption</label>
-      <textarea id="videoCaption" maxlength="220" placeholder="Write a caption..."></textarea>
-      <label class="field-label" for="videoTopic">Topic</label>
-      <select id="videoTopic"><option>Trending</option><option>Music</option><option>Gaming</option><option>Lifestyle</option><option>Comedy</option></select>
-      <button class="create-button publish-button" id="publishVideo">Publish video</button>
-    </div>
-  </div>
 
-  <div class="modal hidden" id="commentsModal" role="dialog" aria-modal="true" aria-labelledby="commentsTitle">
+        <button class="modal-close"
+                data-close="uploadModal"
+                aria-label="Close">×</button>
+
+        <p class="eyebrow">CREATOR STUDIO</p>
+
+        <h2 id="uploadTitle">Upload a video</h2>
+
+        <label class="file-drop" for="videoFile">
+            <span class="upload-arrow">↑</span>
+            <b>Choose a video</b>
+            <small>MP4, WebM or MOV</small>
+        </label>
+
+        <input id="videoFile" type="file"
+               accept="video/*" hidden>
+
+        <p id="selectedFile" class="selected-file">
+            No video selected
+        </p>
+
+        <label class="field-label" for="videoCaption">
+            Caption
+        </label>
+
+        <textarea id="videoCaption"
+                  maxlength="220"
+                  placeholder="Write a caption..."></textarea>
+
+        <label class="field-label" for="videoTopic">
+            Topic
+        </label>
+
+        <select id="videoTopic">
+            <option>Trending</option>
+            <option>Music</option>
+            <option>Gaming</option>
+            <option>Lifestyle</option>
+            <option>Comedy</option>
+        </select>
+
+        <button class="create-button publish-button"
+                id="publishVideo">
+            Publish video
+        </button>
+
+    </div>
+</div>
+
+
+<!-- COMMENTS MODAL -->
+
+<div class="modal hidden" id="commentsModal"
+     role="dialog" aria-modal="true"
+     aria-labelledby="commentsTitle">
+
     <div class="modal-panel comments-panel">
-      <button class="modal-close" data-close="commentsModal" aria-label="Close">×</button>
-      <p class="eyebrow">COMMUNITY</p>
-      <h2 id="commentsTitle">Comments</h2>
-      <div id="commentList" class="comment-list"></div>
-      <form id="commentForm" class="comment-form">
-        <input id="commentInput" maxlength="300" placeholder="Add a comment..." required>
-        <button class="create-button" type="submit">Send</button>
-      </form>
-    </div>
-  </div>
 
-  <div id="toast" class="toast" role="status"></div>
-  <script src="app.js"></script>
+        <button class="modal-close"
+                data-close="commentsModal"
+                aria-label="Close">×</button>
+
+        <p class="eyebrow">COMMUNITY</p>
+
+        <h2 id="commentsTitle">Comments</h2>
+
+        <div id="commentList" class="comment-list"></div>
+
+        <form id="commentForm" class="comment-form">
+
+            <input id="commentInput"
+                   maxlength="300"
+                   placeholder="Add a comment..."
+                   required>
+
+            <button class="create-button" type="submit">
+                Send
+            </button>
+
+        </form>
+
+    </div>
+</div>
+
+
+<div id="toast" class="toast" role="status"></div>
+
+
+<!-- MAIN JAVASCRIPT -->
+
+<script src="app.js"></script>
+
 </body>
 </html>
