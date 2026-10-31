@@ -92,7 +92,7 @@
         username: "vtikofficial",
         displayName: "V-Tik Official",
         caption: "Welcome to V-Tik Pro! 🎬 Discover, watch and share amazing videos.",
-        src: "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
+        src: "fik logogo(1).mp4",
         demo: true,
         createdAt: Date.now()
       }
