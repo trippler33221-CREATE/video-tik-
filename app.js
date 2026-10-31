@@ -1,4 +1,4 @@
-```javascript
+
 (() => {
     "use strict";
 
@@ -31,7 +31,7 @@
         following: false,
         liked: false,
         saved: false,
-        src: "videos/demo.mp4",
+        src: "fik logogo (1).mp4",
         demo: true
     };
 
