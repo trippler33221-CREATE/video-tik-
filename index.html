@@ -4,332 +4,79 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <meta name="theme-color" content="#080810">
-  <meta name="description" content="V-Tik Pro - Discover, watch and share amazing short videos.">
-  <meta name="author" content="V-Tik">
-
-  <meta property="og:title" content="V-Tik Pro">
-  <meta property="og:description" content="Discover, watch and share videos with V-Tik.">
-  <meta property="og:type" content="website">
-
+  <meta name="theme-color" content="#09090d">
   <title>V-Tik Pro — Short Videos</title>
-
-  <link rel="icon" href="Neon V-TIK Video Logo.png">
-  <link rel="apple-touch-icon" href="Neon V-TIK Video Logo.png">
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-
   <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-  <!-- HEADER -->
-  <header class="topbar">
+<header class="topbar">
+  <a href="#" class="brand">V<span>-TIK</span></a>
 
-    <a href="index.html" class="brand" aria-label="V-Tik home">
-      <img
-        src="Neon V-TIK Video Logo.png"
-        alt="V-Tik"
-        class="brand-logo"
-      >
-      <span class="brand-name">V-<span>TIK</span></span>
-    </a>
+  <div class="search-box">
+    <input type="search" id="searchInput" placeholder="Search videos...">
+    <button id="clearSearch" type="button">✕</button>
+  </div>
 
-    <!-- SEARCH -->
-    <label class="search-wrap">
-      <span aria-hidden="true">⌕</span>
+  <div class="header-actions">
+    <button id="createTop" class="create-btn">＋ Create</button>
+    <button class="avatar" id="headerAvatar">TR</button>
+  </div>
+</header>
 
-      <input
-        type="search"
-        id="searchInput"
-        placeholder="Search videos..."
-        autocomplete="off"
-        aria-label="Search videos"
-      >
+<aside class="sidebar">
+  <a href="#" class="active">⌂ Home</a>
+  <a href="#videoFeed">▣ Explore</a>
+  <a href="#about">ⓘ About</a>
+  <a href="#privacy">♧ Privacy</a>
+  <p>© 2026 V-Tik</p>
+</aside>
 
-      <button
-        type="button"
-        id="clearSearch"
-        aria-label="Clear search"
-      >×</button>
+<main class="main-content">
+  <h2 class="feed-heading">Discover videos</h2>
+
+  <div id="videoFeed" class="video-feed"></div>
+
+  <div id="emptyState" class="empty-state">
+    <div class="empty-icon">▶</div>
+    <h2>No videos found</h2>
+    <p>Upload a video or try another search.</p>
+    <button id="emptyCreate" class="create-btn">＋ Upload video</button>
+  </div>
+</main>
+
+<nav class="mobile-nav">
+  <a href="#">⌂<span>Home</span></a>
+  <a href="#videoFeed">▣<span>Discover</span></a>
+  <button id="mobileCreate">＋</button>
+  <a href="#videoFeed">♡<span>Following</span></a>
+  <a href="#" id="mobileProfile">●<span>Profile</span></a>
+</nav>
+
+<!-- Upload modal -->
+<div class="modal" id="createModal">
+  <div class="modal-content">
+    <button class="close-btn" id="closeCreate">×</button>
+    <h2>Create a video</h2>
+    <p>Select a video from your device.</p>
+
+    <label class="upload-area" for="videoFile">
+      <span>＋</span>
+      <strong>Choose video</strong>
+      <small>MP4, WebM or MOV</small>
     </label>
 
-    <!-- HEADER BUTTONS -->
-    <div class="top-actions">
+    <input type="file" id="videoFile" accept="video/*" hidden>
 
-      <button class="btn btn-light" id="createTop" type="button">
-        ＋ Create
-      </button>
+    <p id="selectedFile">No video selected</p>
 
-      <a
-        href="accounts.html"
-        class="avatar"
-        id="headerAvatar"
-        aria-label="Your profile"
-      >TR</a>
+    <textarea id="videoCaption" placeholder="Write a caption..."></textarea>
+    <button id="postVideo" class="create-btn full-btn">Post video</button>
+  </div>
+</div>
 
-    </div>
+<div id="toast" class="toast"></div>
 
-  </header>
-
-
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-
-    <div class="sidebar-menu">
-
-      <p class="sidebar-heading">EXPLORE</p>
-
-      <button class="side-link active" id="discoverBtn" type="button">
-        <span>⌕</span>
-        <span>Discover</span>
-      </button>
-
-      <a href="about.html" class="side-link">
-        <span>ⓘ</span>
-        <span>About</span>
-      </a>
-
-      <a href="privacy.html" class="side-link">
-        <span>▤</span>
-        <span>Privacy</span>
-      </a>
-
-      <a href="terms.html" class="side-link">
-        <span>▧</span>
-        <span>Terms</span>
-      </a>
-
-    </div>
-
-    <div class="sidebar-footer">
-      <strong>V-Tik Pro</strong>
-      <small>© 2026 V-Tik</small>
-      <small>Made for creators ❤️</small>
-    </div>
-
-  </aside>
-
-
-  <!-- MAIN CONTENT -->
-  <main class="main-content">
-
-    <!-- VIDEO FEED -->
-    <section
-      id="videoFeed"
-      class="video-feed"
-      aria-label="Video feed"
-      aria-live="polite"
-      aria-busy="false"
-    ></section>
-
-
-    <!-- EMPTY STATE -->
-    <section
-      id="emptyState"
-      class="empty-state hidden"
-      aria-live="polite"
-    >
-
-      <div class="empty-icon">🎬</div>
-
-      <h2>No videos found</h2>
-
-      <p>
-        Try another search or share your first video on V-Tik.
-      </p>
-
-      <button
-        class="btn btn-primary"
-        id="emptyCreate"
-        type="button"
-      >
-        ＋ Create Video
-      </button>
-
-    </section>
-
-  </main>
-
-
-  <!-- MOBILE BOTTOM NAVIGATION -->
-  <nav class="mobile-nav" aria-label="Mobile navigation">
-
-    <a href="index.html" class="active">
-      <b>⌂</b>
-      <span>Home</span>
-    </a>
-
-    <button id="mobileDiscover" type="button">
-      <b>⌕</b>
-      <span>Discover</span>
-    </button>
-
-    <button id="mobileCreate" type="button">
-      <b class="create-icon">＋</b>
-      <span>Create</span>
-    </button>
-
-    <button id="mobileInbox" type="button">
-      <b>♧</b>
-      <span>Following</span>
-    </button>
-
-    <a href="accounts.html">
-      <b>◉</b>
-      <span>Profile</span>
-    </a>
-
-  </nav>
-
-
-  <!-- CREATE VIDEO MODAL -->
-  <section
-    id="createModal"
-    class="modal hidden"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="createTitle"
-  >
-
-    <div class="modal-card">
-
-      <button
-        class="close-modal"
-        id="closeCreate"
-        type="button"
-        aria-label="Close"
-      >×</button>
-
-      <div class="modal-logo">
-        <img src="Neon V-TIK Video Logo.png" alt="V-Tik logo">
-      </div>
-
-      <p class="eyebrow">SHARE YOUR CREATIVITY</p>
-
-      <h2 id="createTitle">Create on V-Tik</h2>
-
-      <p class="muted">
-        Select a video from your device.
-      </p>
-
-      <!-- UPLOAD -->
-      <label for="videoFile" class="upload-zone">
-
-        <span class="upload-icon">⇧</span>
-
-        <strong>Choose video</strong>
-
-        <small>Select a video from your device.</small>
-
-        <span class="btn btn-light">Browse Files</span>
-
-      </label>
-
-      <input
-        type="file"
-        id="videoFile"
-        name="videoFile"
-        accept="video/*"
-        hidden
-      >
-
-      <p id="selectedFile" class="selected-file">
-        No video selected
-      </p>
-
-      <!-- CAPTION -->
-      <label for="videoCaption" class="field-label">
-        Caption
-      </label>
-
-      <textarea
-        id="videoCaption"
-        name="videoCaption"
-        rows="3"
-        maxlength="220"
-        placeholder="Write a caption..."
-      ></textarea>
-
-      <button
-        class="btn btn-primary full-width"
-        id="postVideo"
-        type="button"
-      >
-        Post video
-      </button>
-
-    </div>
-
-  </section>
-
-
-  <!-- COMMENTS MODAL -->
-  <section
-    id="commentModal"
-    class="modal hidden"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="commentTitle"
-  >
-
-    <div class="modal-card comments-card">
-
-      <button
-        class="close-modal"
-        id="closeComments"
-        type="button"
-        aria-label="Close comments"
-      >×</button>
-
-      <h2 id="commentTitle">Comments</h2>
-
-      <div
-        id="commentList"
-        class="comment-list"
-        aria-live="polite"
-      ></div>
-
-      <form id="commentForm" class="comment-form">
-
-        <input
-          id="commentInput"
-          name="comment"
-          type="text"
-          maxlength="300"
-          placeholder="Add a comment..."
-          autocomplete="off"
-          aria-label="Add a comment"
-          required
-        >
-
-        <button class="btn btn-primary" type="submit">
-          Post
-        </button>
-
-      </form>
-
-    </div>
-
-  </section>
-
-
-  <!-- TOAST -->
-  <div
-    id="toast"
-    class="toast hidden"
-    role="status"
-    aria-live="polite"
-  ></div>
-
-
-  <!-- JAVASCRIPT -->
-  <script src="app.js" defer></script>
-
+<script src="app.js"></script>
 </body>
 </html>
