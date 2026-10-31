@@ -16,98 +16,99 @@
     let toastTimer;
 
     /* ============================
-   DEMO VIDEOS
-============================ */
+       DEMO VIDEOS
+    ============================ */
 
-const demoVideos = [
+    const demoVideos = [
 
-    {
-        id: "demo-1",
-        username: "flcreator",
-        displayName: "V-Tik creator",
-        caption: "Ranking the best F1 donuts! 🏎️🔥 #F1 #Formula1 #Motorsport",
-        topic: "Trending",
-        likes: 1300,
-        comments: [],
-        views: "1.3K",
-        following: false,
-        liked: false,
-        saved: false,
-        src: "fik logogo (1).mp4",
-        demo: true
-    },
+        {
+            id: "demo-1",
+            username: "flcreator",
+            displayName: "V-Tik creator",
+            caption: "Ranking the best F1 donuts! 🏎️🔥 #F1 #Formula1 #Motorsport",
+            topic: "Trending",
+            likes: 1300,
+            comments: [],
+            views: "1.3K",
+            following: false,
+            liked: false,
+            saved: false,
+            src: "fik logogo (1).mp4",
+            demo: true
+        },
 
-    {
-        id: "demo-2",
-        username: "musicstar",
-        displayName: "Music lover",
-        caption: "Enjoy the latest music vibes! 🎵🔥 #Music #Vibes",
-        topic: "Music",
-        likes: 2500,
-        comments: [],
-        views: "2.5K",
-        following: false,
-        liked: false,
-        saved: false,
-        src: "videos/music.mp4",
-        demo: true
-    },
+        {
+            id: "demo-2",
+            username: "musicstar",
+            displayName: "Music lover",
+            caption: "Enjoy the latest music vibes! 🎵🔥 #Music #Vibes",
+            topic: "Music",
+            likes: 2500,
+            comments: [],
+            views: "2.5K",
+            following: false,
+            liked: false,
+            saved: false,
+            src: "videos/music.mp4",
+            demo: true
+        },
 
-    {
-        id: "demo-3",
-        username: "gamerpro",
-        displayName: "Gaming creator",
-        caption: "Watch this amazing gaming moment! 🎮🔥 #Gaming",
-        topic: "Gaming",
-        likes: 980,
-        comments: [],
-        views: "980",
-        following: false,
-        liked: false,
-        saved: false,
-        src: "videos/gaming.mp4",
-        demo: true
-    },
+        {
+            id: "demo-3",
+            username: "gamerpro",
+            displayName: "Gaming creator",
+            caption: "Watch this amazing gaming moment! 🎮🔥 #Gaming",
+            topic: "Gaming",
+            likes: 980,
+            comments: [],
+            views: "980",
+            following: false,
+            liked: false,
+            saved: false,
+            src: "videos/gaming.mp4",
+            demo: true
+        },
 
-    {
-        id: "demo-4",
-        username: "trendking",
-        displayName: "Trending creator",
-        caption: "You won't believe what happens next! 😂🔥 #Trending",
-        topic: "Trending",
-        likes: 5400,
-        comments: [],
-        views: "5.4K",
-        following: false,
-        liked: false,
-        saved: false,
-        src: "videos/trending.mp4",
-        demo: true
-    },
+        {
+            id: "demo-4",
+            username: "trendking",
+            displayName: "Trending creator",
+            caption: "You won't believe what happens next! 😂🔥 #Trending",
+            topic: "Trending",
+            likes: 5400,
+            comments: [],
+            views: "5.4K",
+            following: false,
+            liked: false,
+            saved: false,
+            src: "videos/trending.mp4",
+            demo: true
+        },
 
-    {
-        id: "demo-5",
-        username: "sportszone",
-        displayName: "Sports creator",
-        caption: "Unbelievable football skills! ⚽🔥 #Football #Sports",
-        topic: "Trending",
-        likes: 3200,
-        comments: [],
-        views: "3.2K",
-        following: false,
-        liked: false,
-        saved: false,
-        src: "videos/football.mp4",
-        demo: true
-    }
+        {
+            id: "demo-5",
+            username: "sportszone",
+            displayName: "Sports creator",
+            caption: "Unbelievable football skills! ⚽🔥 #Football #Sports",
+            topic: "Trending",
+            likes: 3200,
+            comments: [],
+            views: "3.2K",
+            following: false,
+            liked: false,
+            saved: false,
+            src: "videos/football.mp4",
+            demo: true
+        }
 
-];
+    ];
 
     /* ============================
        NOTIFICATION MESSAGE
     ============================ */
 
     function notify(message) {
+
         const el = $("toast");
 
         el.textContent = message;
@@ -118,6 +119,7 @@ const demoVideos = [
         toastTimer = setTimeout(() => {
             el.classList.remove("show");
         }, 2400);
+
     }
 
     /* ============================
@@ -125,19 +127,27 @@ const demoVideos = [
     ============================ */
 
     function getInteractions() {
+
         try {
+
             return JSON.parse(
                 localStorage.getItem(INTERACTION_KEY) || "{}"
             );
+
         } catch {
+
             return {};
+
         }
+
     }
 
     function saveInteractions() {
+
         const data = {};
 
         videos.forEach(video => {
+
             data[video.id] = {
                 liked: video.liked,
                 saved: video.saved,
@@ -145,33 +155,46 @@ const demoVideos = [
                 likes: video.likes,
                 comments: video.comments
             };
+
         });
 
         try {
+
             localStorage.setItem(
                 INTERACTION_KEY,
                 JSON.stringify(data)
             );
+
         } catch (error) {
+
             console.error("Could not save interactions:", error);
+
             notify("Storage is full. Some changes may not be saved.");
+
         }
+
     }
 
     function restoreInteractions() {
+
         const data = getInteractions();
 
         videos.forEach(video => {
+
             const saved = data[video.id];
 
             if (saved) {
+
                 video.liked = saved.liked ?? false;
                 video.saved = saved.saved ?? false;
                 video.following = saved.following ?? false;
                 video.likes = saved.likes ?? video.likes;
                 video.comments = saved.comments ?? video.comments;
+
             }
+
         });
+
     }
 
     /* ============================
@@ -179,37 +202,49 @@ const demoVideos = [
     ============================ */
 
     function openDB() {
+
         return new Promise((resolve, reject) => {
 
             if (!("indexedDB" in window)) {
+
                 return reject(new Error("IndexedDB unavailable"));
+
             }
 
             const request = indexedDB.open(DB_NAME, 1);
 
             request.onupgradeneeded = () => {
+
                 const db = request.result;
 
                 if (!db.objectStoreNames.contains(STORE)) {
+
                     db.createObjectStore(STORE, {
                         keyPath: "id"
                     });
+
                 }
+
             };
 
             request.onsuccess = () => resolve(request.result);
 
             request.onerror = () => reject(request.error);
+
         });
+
     }
 
     async function dbAction(mode, action) {
+
         const db = await openDB();
 
         return new Promise((resolve, reject) => {
 
             const tx = db.transaction(STORE, mode);
+
             const store = tx.objectStore(STORE);
+
             const request = action(store);
 
             request.onsuccess = () => resolve(request.result);
@@ -219,10 +254,15 @@ const demoVideos = [
             tx.oncomplete = () => db.close();
 
             tx.onerror = () => {
+
                 db.close();
+
                 reject(tx.error);
+
             };
+
         });
+
     }
 
     const readAllUploads = () =>
@@ -239,25 +279,35 @@ const demoVideos = [
     ============================ */
 
     function escapeHTML(value = "") {
+
         return String(value).replace(/[&<>"']/g, char => ({
+
             "&": "&amp;",
             "<": "&lt;",
             ">": "&gt;",
             '"': "&quot;",
             "'": "&#39;"
+
         })[char]);
+
     }
 
     function formatLikes(number) {
+
         if (number >= 1000000) {
+
             return (number / 1000000).toFixed(1) + "M";
+
         }
 
         if (number >= 1000) {
+
             return (number / 1000).toFixed(1) + "K";
+
         }
 
         return String(number);
+
     }
 
     /* ============================
@@ -271,32 +321,45 @@ const demoVideos = [
         let list = [...videos];
 
         if (currentPage === "Liked") {
+
             list = list.filter(video => video.liked);
+
         }
 
         if (currentPage === "Saved") {
+
             list = list.filter(video => video.saved);
+
         }
 
         if (currentPage === "Following") {
+
             list = list.filter(video => video.following);
+
         }
 
         if (["Trending", "Music", "Gaming"].includes(currentPage)) {
+
             list = list.filter(video =>
                 video.topic.toLowerCase() === currentPage.toLowerCase()
             );
+
         }
 
         if (query) {
+
             list = list.filter(video =>
+
                 `${video.username} ${video.displayName} ${video.caption} ${video.topic}`
                     .toLowerCase()
                     .includes(query)
+
             );
+
         }
 
         return list;
+
     }
 
     /* ============================
@@ -322,6 +385,7 @@ const demoVideos = [
             const card = document.createElement("article");
 
             card.className = "video-card";
+
             card.dataset.id = video.id;
 
             const source = video.objectUrl || video.src;
@@ -380,8 +444,6 @@ const demoVideos = [
 
                 <div class="video-actions">
 
-                    <!-- LIKE -->
-
                     <div class="action-wrap">
 
                         <button
@@ -400,8 +462,6 @@ const demoVideos = [
 
                     </div>
 
-                    <!-- COMMENTS -->
-
                     <div class="action-wrap">
 
                         <button
@@ -418,8 +478,6 @@ const demoVideos = [
                         </span>
 
                     </div>
-
-                    <!-- SAVE -->
 
                     <div class="action-wrap">
 
@@ -438,8 +496,6 @@ const demoVideos = [
                         </span>
 
                     </div>
-
-                    <!-- SHARE -->
 
                     <div class="action-wrap">
 
@@ -482,6 +538,7 @@ const demoVideos = [
                     }
 
                 </div>
+
             `;
 
             feed.appendChild(card);
@@ -489,6 +546,7 @@ const demoVideos = [
         });
 
         setupVideoPlayback();
+
     }
 
     /* ============================
@@ -519,7 +577,9 @@ const demoVideos = [
                     });
 
                     video.play()
+
                         .then(() => stage.classList.remove("paused"))
+
                         .catch(() => notify("Could not play this video."));
 
                 } else {
@@ -565,6 +625,7 @@ const demoVideos = [
                 ? "❤️ Video liked!"
                 : "Like removed"
         );
+
     }
 
     /* ============================
@@ -584,6 +645,7 @@ const demoVideos = [
                 ? "🔖 Video added to Saved!"
                 : "Video removed from Saved"
         );
+
     }
 
     /* ============================
@@ -602,6 +664,7 @@ const demoVideos = [
         $("commentsModal").classList.remove("hidden");
 
         $("commentInput").focus();
+
     }
 
     function renderComments(video) {
@@ -620,6 +683,7 @@ const demoVideos = [
             `;
 
             return;
+
         }
 
         commentList.innerHTML = video.comments.map(comment => `
@@ -666,7 +730,6 @@ const demoVideos = [
 
         render();
 
-        // Keep the comments modal open after posting.
         $("commentsModal").classList.remove("hidden");
 
         notify("Comment posted!");
@@ -679,9 +742,7 @@ const demoVideos = [
 
     async function shareVideo(video) {
 
-        const shareURL = new URL(
-            window.location.href
-        );
+        const shareURL = new URL(window.location.href);
 
         shareURL.hash = "video-" + encodeURIComponent(video.id);
 
@@ -724,9 +785,13 @@ const demoVideos = [
                 input.remove();
 
                 if (copied) {
+
                     notify("Video link copied!");
+
                 } else {
+
                     notify("Could not copy the link.");
+
                 }
 
             }
@@ -762,6 +827,7 @@ const demoVideos = [
                 ? "Following creator!"
                 : "Unfollowed creator"
         );
+
     }
 
     /* ============================
@@ -775,7 +841,9 @@ const demoVideos = [
         }
 
         if (video.objectUrl) {
+
             URL.revokeObjectURL(video.objectUrl);
+
         }
 
         videos = videos.filter(
@@ -783,7 +851,9 @@ const demoVideos = [
         );
 
         if (!video.demo) {
+
             await removeUpload(video.id).catch(console.error);
+
         }
 
         saveInteractions();
@@ -847,23 +917,33 @@ const demoVideos = [
     ============================ */
 
     function showModal(id) {
+
         $(id).classList.remove("hidden");
+
     }
 
     function hideModal(id) {
+
         $(id).classList.add("hidden");
+
     }
 
     $("openUpload").addEventListener("click", () => {
+
         showModal("uploadModal");
+
     });
 
     $("mobileUpload").addEventListener("click", () => {
+
         showModal("uploadModal");
+
     });
 
     $("emptyUpload").addEventListener("click", () => {
+
         showModal("uploadModal");
+
     });
 
     $("topAvatar").addEventListener("click", () => {
@@ -887,7 +967,9 @@ const demoVideos = [
         modal.addEventListener("click", event => {
 
             if (event.target === modal) {
+
                 hideModal(modal.id);
+
             }
 
         });
@@ -924,11 +1006,15 @@ const demoVideos = [
         const file = $("videoFile").files[0];
 
         if (!file) {
+
             return notify("Choose a video first.");
+
         }
 
         if (!file.type.startsWith("video/")) {
+
             return notify("Please choose a valid video file.");
+
         }
 
         const record = {
@@ -978,8 +1064,11 @@ const demoVideos = [
             notify("Your video was published!");
 
             window.scrollTo({
+
                 top: 0,
+
                 behavior: "smooth"
+
             });
 
         } catch (error) {
@@ -1032,10 +1121,7 @@ const demoVideos = [
 
                 item.classList.toggle("active", active);
 
-                item.classList.toggle(
-                    "mobile-active",
-                    active
-                );
+                item.classList.toggle("mobile-active", active);
 
             });
 
@@ -1085,53 +1171,21 @@ const demoVideos = [
 
     });
 
-   /* ============================
-   LOAD VIDEOS
-============================ */
+    /* ============================
+       LOAD VIDEOS
+    ============================ */
 
-async function loadVideos() {
+    async function loadVideos() {
 
-    videos.forEach(video => {
+        videos.forEach(video => {
 
-        if (video.objectUrl) {
-            URL.revokeObjectURL(video.objectUrl);
-        }
+            if (video.objectUrl) {
 
-    });
+                URL.revokeObjectURL(video.objectUrl);
 
-    const uploads = await readAllUploads().catch(error => {
+            }
 
-        console.error("Could not load videos:", error);
-
-        return [];
-
-    });
-
-    // Load uploaded videos.
-    const uploadedVideos = uploads.map(item => ({
-
-        ...item,
-
-        objectUrl: URL.createObjectURL(item.blob),
-
-        comments: item.comments || []
-
-    }));
-
-    // Add all demo video cards.
-    videos = [
-        ...uploadedVideos,
-        ...demoVideos.map(video => ({
-            ...video,
-            comments: []
-        }))
-    ];
-
-    restoreInteractions();
-
-    render();
-
-}
+        });
 
         const uploads = await readAllUploads().catch(error => {
 
@@ -1141,7 +1195,8 @@ async function loadVideos() {
 
         });
 
-        videos = uploads.map(item => ({
+        // Load uploaded videos.
+        const uploadedVideos = uploads.map(item => ({
 
             ...item,
 
@@ -1151,16 +1206,20 @@ async function loadVideos() {
 
         }));
 
-        // Show the demo video when no uploads exist.
+        // Add all five demo video cards.
+        videos = [
 
-        if (!videos.length) {
+            ...uploadedVideos,
 
-            videos.push({
-                ...demo,
+            ...demoVideos.map(video => ({
+
+                ...video,
+
                 comments: []
-            });
 
-        }
+            }))
+
+        ];
 
         restoreInteractions();
 
@@ -1175,4 +1234,3 @@ async function loadVideos() {
     loadVideos();
 
 })();
-```
