@@ -20,23 +20,6 @@
     ============================ */
 
     const demoVideos = [
-
-        {
-            id: "demo-1",
-            username: "fik fameica",
-            displayName: "fik logogo ",
-            caption: "Ranking the best F1 donuts! 🏎️🔥 #F1 #Formula1 #Motorsport",
-            topic: "Trending",
-            likes: 1300,
-            comments: [],
-            views: "13K",
-            following: true,
-            liked: true,
-            saved: true,
-            src: "fik logogo (1).mp4",
-            demo: true
-        },
-
         {
             id: "demo-2",
             username: "musicstar",
