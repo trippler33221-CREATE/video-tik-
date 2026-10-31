@@ -1,10 +1,15 @@
 
+/* =========================================
+   V-TIK PRO — IMPROVED STYLESHEET
+========================================= */
+
 * {
     box-sizing: border-box;
 }
 
 :root {
     color-scheme: dark;
+
     --bg: #09090d;
     --panel: #121219;
     --panel2: #20212a;
@@ -13,6 +18,9 @@
     --text: #f7f7fb;
     --pink: #ff2857;
     --purple: #9b32d8;
+
+    --topbar-height: 75px;
+    --mobile-nav-height: 65px;
 }
 
 html {
@@ -21,10 +29,11 @@ html {
 
 body {
     margin: 0;
+    min-height: 100vh;
     background: var(--bg);
     color: var(--text);
     font-family: Inter, Arial, sans-serif;
-    min-height: 100vh;
+    overflow-x: hidden;
 }
 
 button,
@@ -39,42 +48,60 @@ button {
     cursor: pointer;
 }
 
-/* TOP BAR */
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+    outline: 2px solid var(--pink);
+    outline-offset: 3px;
+}
+
+/* =========================================
+   TOP BAR
+========================================= */
 
 .topbar {
-    height: 75px;
+    height: var(--topbar-height);
     position: sticky;
     top: 0;
     z-index: 30;
+
     display: grid;
     grid-template-columns: 270px minmax(240px, 440px) 1fr;
     align-items: center;
     gap: 30px;
+
     padding: 0 4%;
+
     background: #09090df2;
     border-bottom: 1px solid #24242d;
     backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
 }
 
 .brand {
+    width: max-content;
     display: flex;
     align-items: center;
     gap: 5px;
-    text-decoration: none;
+
     color: white;
+    text-decoration: none;
     font-size: 21px;
     font-weight: 900;
     letter-spacing: -1px;
-    width: max-content;
 }
 
 .brand-mark {
-    display: grid;
-    place-items: center;
     width: 38px;
     height: 38px;
+
+    display: grid;
+    place-items: center;
+
     border-radius: 13px;
     background: var(--pink);
+
     font-size: 26px;
     font-weight: 900;
     font-style: italic;
@@ -86,20 +113,32 @@ button {
 
 .search-box {
     height: 44px;
+
     display: flex;
     align-items: center;
     gap: 10px;
+
     padding: 0 13px;
+
     background: #191a22;
     border: 1px solid #30313b;
     border-radius: 12px;
+
     color: #b8bac5;
+    transition: border-color .2s;
+}
+
+.search-box:focus-within {
+    border-color: var(--pink);
 }
 
 .search-box input {
     width: 100%;
+    min-width: 0;
+
     border: 0;
     outline: 0;
+
     background: transparent;
     color: white;
     font-size: 13px;
@@ -120,28 +159,33 @@ button {
 }
 
 .create-button {
-    border: 0;
-    border-radius: 12px;
-    background: var(--pink);
-    color: white;
-    font-weight: 800;
-    padding: 13px 17px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
+
+    padding: 13px 17px;
+
+    border: 0;
+    border-radius: 12px;
+
+    background: var(--pink);
+    color: white;
+
+    font-weight: 800;
     transition: .2s;
 }
 
 .create-button:hover {
-    filter: brightness(1.1);
-    transform: translateY(-1px);
+    filter: brightness(1.12);
+    transform: translateY(-2px);
 }
 
 .icon-button,
 .avatar {
     width: 42px;
     height: 42px;
+
     border-radius: 13px;
     background: #1a1b23;
     border: 1px solid #30313b;
@@ -151,29 +195,38 @@ button {
     border: 0;
     border-radius: 50%;
     background: linear-gradient(135deg, #ff2857, #9b32d8);
+
     font-size: 12px;
     font-weight: 800;
 }
 
-/* MAIN LAYOUT */
+/* =========================================
+   MAIN LAYOUT
+========================================= */
 
 .app-layout {
     display: grid;
     grid-template-columns: 230px minmax(0, 1fr) 64px;
     gap: 26px;
+
     max-width: 1540px;
     margin: 0 auto;
-    padding: 17px 3% 50px;
+    padding: 17px 3% 40px;
 }
 
-/* LEFT SIDEBAR */
+/* =========================================
+   LEFT SIDEBAR
+========================================= */
 
 .left-sidebar {
     position: sticky;
     top: 92px;
+
     height: calc(100vh - 110px);
     min-height: 500px;
+
     padding: 4px 0 20px;
+
     display: flex;
     flex-direction: column;
 }
@@ -186,17 +239,24 @@ button {
 
 .nav-item {
     height: 47px;
+
     display: flex;
     align-items: center;
     gap: 17px;
+
     padding: 0 17px;
+
     border: 0;
     border-radius: 12px;
+
     background: transparent;
     color: #b9bbc5;
+
     text-align: left;
     font-size: 13px;
     font-weight: 700;
+
+    transition: .2s;
 }
 
 .nav-item span {
@@ -221,6 +281,7 @@ button {
 
 .sidebar-heading {
     margin: 31px 14px 12px;
+
     color: #9294a1;
     font-size: 11px;
     font-weight: 900;
@@ -230,12 +291,14 @@ button {
 .sidebar-footer {
     margin-top: auto;
     padding: 15px 14px;
+
     color: #8d8f9c;
     font-size: 11px;
 }
 
 .footer-links {
     display: flex;
+    flex-wrap: wrap;
     gap: 13px;
     margin-bottom: 18px;
 }
@@ -245,19 +308,22 @@ button {
     text-decoration: none;
 }
 
-/* VIDEO FEED */
+/* =========================================
+   VIDEO FEED AREA
+========================================= */
 
 .feed-area {
     width: 100%;
     max-width: 720px;
-    margin: 0 auto;
     min-width: 0;
+    margin: 0 auto;
 }
 
 .feed-heading {
     display: flex;
     align-items: baseline;
     justify-content: space-between;
+
     margin: 3px 0 13px;
     padding: 0 2px;
 }
@@ -272,42 +338,114 @@ button {
     font-size: 11px;
 }
 
+/* =========================================
+   ONE-VIDEO-AT-A-TIME SCROLLING
+========================================= */
+
+/*
+   The feed itself scrolls.
+   Each card occupies the available feed height.
+*/
+
+#videoFeed,
 .video-feed {
-    display: grid;
-    gap: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+
+    width: 100%;
+    height: calc(100vh - 150px);
+    height: calc(100dvh - 150px);
+
+    min-height: 400px;
+
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
+    overscroll-behavior-y: contain;
+
+    scrollbar-width: none;
+    -ms-overflow-style: none;
 }
 
-.video-card {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 48px;
-    gap: 12px;
+#videoFeed::-webkit-scrollbar,
+.video-feed::-webkit-scrollbar {
+    display: none;
+}
+
+/* ONE VIDEO CARD */
+
+#videoFeed .video-card,
+.video-feed .video-card {
+    position: relative;
+
+    display: flex;
+    flex: 0 0 100%;
+    align-items: stretch;
+    justify-content: center;
+
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+
     padding: 12px;
-    background: #121219;
-    border: 1px solid #292a34;
-    border-radius: 19px;
-    min-width: 0;
+
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+
+    overflow: hidden;
 }
 
-.video-main {
+/* VIDEO MAIN AREA */
+
+.video-card .video-main {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+
     min-width: 0;
+    min-height: 0;
 }
+
+/* =========================================
+   VIDEO PLAYER
+========================================= */
 
 .video-stage {
     position: relative;
+
     width: 100%;
     height: min(76vh, 685px);
-    min-height: 360px;
+    min-height: 300px;
+
     display: flex;
     justify-content: center;
+    align-items: center;
+
     overflow: hidden;
+
     background: #000;
     border-radius: 13px;
 }
 
+#videoFeed .video-stage,
+.video-feed .video-stage {
+    flex: 1;
+    height: auto;
+    min-height: 0;
+    max-height: none;
+}
+
 .video-stage video {
+    display: block;
+
     width: 100%;
     height: 100%;
+
     object-fit: contain;
+
     background: #000;
     cursor: pointer;
 }
@@ -315,20 +453,26 @@ button {
 .video-overlay-play {
     position: absolute;
     inset: 0;
+
     display: grid;
     place-items: center;
+
     pointer-events: none;
     opacity: 0;
-    transition: .2s;
+
+    transition: opacity .2s;
 }
 
 .video-overlay-play span {
-    display: grid;
-    place-items: center;
     width: 68px;
     height: 68px;
+
+    display: grid;
+    place-items: center;
+
     border-radius: 50%;
     background: #0008;
+
     font-size: 27px;
 }
 
@@ -336,12 +480,17 @@ button {
     opacity: 1;
 }
 
-/* VIDEO DETAILS */
+/* =========================================
+   VIDEO DETAILS
+========================================= */
 
 .video-meta {
     display: flex;
     align-items: center;
     gap: 10px;
+
+    flex-shrink: 0;
+
     padding: 12px 3px 0;
 }
 
@@ -349,43 +498,53 @@ button {
     width: 38px;
     height: 38px;
     flex: 0 0 38px;
+
     display: grid;
     place-items: center;
+
     border-radius: 50%;
     background: linear-gradient(135deg, #ff2857, #9335d5);
+
     font-size: 12px;
     font-weight: 900;
 }
 
 .creator-text {
-    min-width: 0;
     flex: 1;
+    min-width: 0;
 }
 
 .creator-name {
+    margin: 0 0 4px;
     font-size: 13px;
     font-weight: 800;
-    margin: 0 0 4px;
 }
 
 .creator-handle {
-    font-size: 11px;
     color: #9294a1;
+    font-size: 11px;
 }
 
 .video-caption {
     margin: 10px 3px 5px;
+
+    color: #e3e3e9;
     font-size: 13px;
     line-height: 1.5;
-    color: #e3e3e9;
+
     overflow-wrap: anywhere;
 }
 
 .follow-button {
+    flex-shrink: 0;
+
+    padding: 8px 13px;
+
     border: 0;
     border-radius: 9px;
+
     background: var(--pink);
-    padding: 8px 13px;
+
     font-size: 11px;
     font-weight: 800;
 }
@@ -395,7 +554,9 @@ button {
     color: #ddd;
 }
 
-/* VIDEO ACTIONS */
+/* =========================================
+   VIDEO ACTIONS
+========================================= */
 
 .video-actions {
     display: flex;
@@ -403,6 +564,9 @@ button {
     align-items: center;
     justify-content: center;
     gap: 16px;
+
+    flex-shrink: 0;
+
     padding: 4px 0;
 }
 
@@ -410,6 +574,7 @@ button {
     display: grid;
     justify-items: center;
     gap: 4px;
+
     color: #aeb0ba;
     font-size: 10px;
 }
@@ -417,33 +582,44 @@ button {
 .action-button {
     width: 43px;
     height: 43px;
+
     display: grid;
     place-items: center;
+
     border: 1px solid #343541;
     border-radius: 50%;
+
     background: #22232c;
+
     font-size: 19px;
+    transition: .2s;
 }
 
 .action-button:hover,
 .action-button.active {
     color: var(--pink);
     border-color: #74304a;
+    transform: scale(1.06);
 }
 
 .action-count {
-    font-size: 10px;
     color: #a5a6b0;
+    font-size: 10px;
 }
 
-/* DESKTOP SCROLL BUTTONS */
+/* =========================================
+   DESKTOP SCROLL BUTTONS
+========================================= */
 
 .scroll-controls {
     position: sticky;
     top: 40%;
+
     height: max-content;
+
     display: grid;
     gap: 10px;
+
     align-self: start;
     padding-top: 130px;
 }
@@ -451,31 +627,33 @@ button {
 .scroll-controls button {
     width: 43px;
     height: 43px;
+
     border: 1px solid #343541;
     border-radius: 50%;
+
     background: #22232c;
     font-size: 23px;
+
+    transition: .2s;
 }
 
 .scroll-controls button:hover {
     background: #343541;
+    transform: scale(1.06);
 }
 
-/* HIDE SCROLL BUTTONS ON MOBILE AND SMALL TABLETS */
-
-@media screen and (max-width: 768px) {
-    .scroll-controls {
-        display: none !important;
-    }
-}
-
-/* EMPTY STATE */
+/* =========================================
+   EMPTY STATE
+========================================= */
 
 .empty-state {
     padding: 70px 20px;
+
     text-align: center;
+
     border: 1px dashed #343541;
     border-radius: 16px;
+
     color: #a4a6b2;
 }
 
@@ -488,39 +666,50 @@ button {
 }
 
 .empty-symbol {
-    font-size: 42px;
     margin-bottom: 15px;
+    font-size: 42px;
 }
 
 .hidden {
     display: none !important;
 }
 
-/* MOBILE NAVIGATION */
+/* =========================================
+   MOBILE NAVIGATION
+========================================= */
 
 .mobile-nav {
     display: none;
 }
 
-/* MODALS */
+/* =========================================
+   MODALS
+========================================= */
 
 .modal {
     position: fixed;
     inset: 0;
     z-index: 60;
+
     display: grid;
     place-items: center;
+
     padding: 18px;
+
     background: #000b;
     backdrop-filter: blur(7px);
+    -webkit-backdrop-filter: blur(7px);
 }
 
 .modal-panel {
     position: relative;
+
     width: min(440px, 100%);
     max-height: 90vh;
     overflow: auto;
+
     padding: 27px;
+
     background: #171820;
     border: 1px solid #343541;
     border-radius: 18px;
@@ -532,10 +721,12 @@ button {
 
 .modal-close {
     position: absolute;
-    right: 15px;
     top: 12px;
+    right: 15px;
+
     border: 0;
     background: none;
+
     color: #b8bac5;
     font-size: 27px;
 }
@@ -547,22 +738,34 @@ button {
     letter-spacing: 1.3px;
 }
 
-/* UPLOAD FORM */
+/* =========================================
+   UPLOAD FORM
+========================================= */
 
 .file-drop {
     display: grid;
     justify-items: center;
     gap: 8px;
+
     padding: 28px;
+
     border: 1px dashed #555666;
     border-radius: 13px;
+
     background: #20212a;
     cursor: pointer;
+
+    transition: .2s;
+}
+
+.file-drop:hover {
+    border-color: var(--pink);
+    background: #29202a;
 }
 
 .upload-arrow {
-    font-size: 30px;
     color: var(--pink);
+    font-size: 30px;
 }
 
 .file-drop small,
@@ -574,6 +777,7 @@ button {
 .field-label {
     display: block;
     margin: 17px 0 7px;
+
     font-size: 12px;
     font-weight: 700;
 }
@@ -583,10 +787,13 @@ select,
 .comment-form input {
     width: 100%;
     padding: 12px;
+
     border: 1px solid #383946;
     border-radius: 10px;
+
     background: #101117;
     color: white;
+
     outline: none;
 }
 
@@ -604,20 +811,26 @@ select {
     margin-top: 18px;
 }
 
-/* COMMENTS */
+/* =========================================
+   COMMENTS
+========================================= */
 
 .comment-list {
     display: grid;
     gap: 12px;
+
     max-height: 45vh;
     overflow: auto;
+
     margin-bottom: 15px;
 }
 
 .comment-item {
     padding: 10px;
+
     background: #22232c;
     border-radius: 10px;
+
     font-size: 13px;
 }
 
@@ -639,21 +852,29 @@ select {
     white-space: nowrap;
 }
 
-/* TOAST MESSAGE */
+/* =========================================
+   TOAST MESSAGE
+========================================= */
 
 .toast {
     position: fixed;
     left: 50%;
     bottom: 25px;
     z-index: 90;
+
     transform: translate(-50%, 20px);
+
     padding: 11px 17px;
+
     background: #292a34;
     border: 1px solid #41424d;
     border-radius: 10px;
+
     font-size: 12px;
+
     opacity: 0;
     pointer-events: none;
+
     transition: .2s;
 }
 
@@ -662,7 +883,9 @@ select {
     transform: translate(-50%, 0);
 }
 
-/* TABLETS AND SMALL LAPTOPS */
+/* =========================================
+   TABLETS AND SMALL LAPTOPS
+========================================= */
 
 @media (max-width: 1000px) {
     .topbar {
@@ -675,18 +898,32 @@ select {
         gap: 15px;
     }
 
+    #videoFeed,
+    .video-feed {
+        height: calc(100vh - 150px);
+        height: calc(100dvh - 150px);
+    }
+
     .video-stage {
         height: 68vh;
     }
 }
 
-/* MOBILE PHONES */
+/* =========================================
+   MOBILE PHONES
+========================================= */
 
 @media (max-width: 700px) {
+    :root {
+        --topbar-height: 64px;
+    }
+
     .topbar {
-        height: 64px;
+        height: var(--topbar-height);
+
         grid-template-columns: auto minmax(90px, 1fr) auto;
         gap: 10px;
+
         padding: 0 12px;
     }
 
@@ -747,16 +984,26 @@ select {
         margin: 4px 3px 12px;
     }
 
-    .video-card {
-        grid-template-columns: minmax(0, 1fr) 42px;
+    /*
+       Leaves space for the top bar,
+       heading and fixed bottom navigation.
+    */
+
+    #videoFeed,
+    .video-feed {
+        height: calc(100vh - 190px);
+        height: calc(100dvh - 190px);
+        min-height: 350px;
+    }
+
+    #videoFeed .video-card,
+    .video-feed .video-card {
         padding: 8px;
-        gap: 7px;
-        border-radius: 14px;
     }
 
     .video-stage {
         height: 68vh;
-        min-height: 350px;
+        min-height: 300px;
         max-height: 650px;
     }
 
@@ -778,25 +1025,34 @@ select {
     .mobile-nav {
         position: fixed;
         z-index: 35;
+
         bottom: 0;
         left: 0;
         right: 0;
-        height: 65px;
+
+        height: var(--mobile-nav-height);
+
         display: flex;
         justify-content: space-around;
         align-items: center;
+
+        padding-bottom: env(safe-area-inset-bottom);
+
         background: #101117f5;
         border-top: 1px solid #2b2c36;
-        padding-bottom: env(safe-area-inset-bottom);
+
         backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
     }
 
     .mobile-nav button {
         display: grid;
         justify-items: center;
         gap: 3px;
+
         border: 0;
         background: none;
+
         color: #aeb0ba;
         font-size: 9px;
     }
@@ -812,10 +1068,13 @@ select {
     .mobile-nav .mobile-create {
         width: 42px;
         height: 34px;
+
         display: grid;
         place-items: center;
+
         border-radius: 10px;
         background: var(--pink);
+
         color: white;
         font-size: 25px;
     }
@@ -825,82 +1084,79 @@ select {
     }
 }
 
-/* EXTRA SMALL PHONES */
+/* =========================================
+   EXTRA SMALL PHONES
+========================================= */
 
 @media (max-width: 390px) {
-    .video-stage {
-        height: 61vh;
-        min-height: 300px;
+    .topbar {
+        gap: 7px;
+        padding: 0 8px;
+    }
+
+    .brand {
+        font-size: 15px;
+    }
+
+    .brand-mark {
+        width: 31px;
+        height: 31px;
+        font-size: 22px;
+    }
+
+    #videoFeed,
+    .video-feed {
+        height: calc(100vh - 185px);
+        height: calc(100dvh - 185px);
     }
 
     .video-card {
-        grid-template-columns: minmax(0, 1fr) 38px;
+        padding: 6px;
+    }
+
+    .video-stage {
+        min-height: 260px;
+    }
+
+    .video-actions {
+        gap: 10px;
     }
 
     .action-button {
         width: 34px;
         height: 34px;
+        font-size: 16px;
+    }
+
+    .action-count {
+        font-size: 9px;
+    }
+
+    .creator-avatar {
+        width: 33px;
+        height: 33px;
+        flex-basis: 33px;
+    }
+
+    .video-caption {
+        font-size: 12px;
     }
 }
 
-/* =================================
-   TIKTOK STYLE ONE-VIDEO SCROLLING
-================================= */
+/* =========================================
+   ACCESSIBILITY AND PERFORMANCE
+========================================= */
 
-#videoFeed {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    overflow-y: auto;
-    scroll-snap-type: y mandatory;
-    scroll-behavior: smooth;
-    overscroll-behavior-y: contain;
-}
-
-/* ONE VIDEO CARD AT A TIME */
-
-#videoFeed .video-card {
-    min-height: 100vh;
-    height: 100vh;
-    flex: 0 0 100vh;
-    scroll-snap-align: start;
-    scroll-snap-stop: always;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-/* VIDEO STAGE */
-
-#videoFeed .video-stage {
-    width: 100%;
-    height: 100%;
-    position: relative;
-    overflow: hidden;
-}
-
-#videoFeed .video-stage video {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    display: block;
-}
-
-/* MOBILE */
-
-@media (max-width: 768px) {
-    #videoFeed .video-card {
-        height: 100dvh;
-        min-height: 100dvh;
-        flex-basis: 100dvh;
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
     }
-}
 
-/* GENERAL VIDEO ELEMENT */
-
-video {
-    width: 100%;
-    height: 100%;
-    display: block;
+    *,
+    *::before,
+    *::after {
+        transition-duration: .01ms !important;
+        animation-duration: .01ms !important;
+        scroll-behavior: auto !important;
+    }
 }
