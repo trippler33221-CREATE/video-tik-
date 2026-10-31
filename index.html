@@ -53,40 +53,7 @@
 </aside>
 
     <main class="main-content">
-      // V-TIK PRO SCROLL BUTTONS
-
-const scrollUp = document.getElementById("scrollUp");
-const scrollDown = document.getElementById("scrollDown");
-
-if (scrollUp && scrollDown) {
-
-    scrollUp.addEventListener("click", () => {
-        window.scrollBy({
-            top: -window.innerHeight * 0.8,
-            behavior: "smooth"
-        });
-    });
-
-    scrollDown.addEventListener("click", () => {
-        window.scrollBy({
-            top: window.innerHeight * 0.8,
-            behavior: "smooth"
-        });
-    });
-
-}
-      <div class="feed-top">
-        <div>
-          <p class="eyebrow">YOUR DAILY ENTERTAINMENT</p>
-          <h1 id="pageTitle">For You</h1>
-        </div>
-        <div class="feed-tabs">
-          <button class="tab active" data-page="home">For You</button>
-          <button class="tab" data-page="following">Following</button>
-        </div>
-      </div>
-
-      <section id="profilePanel" class="profile-panel hidden">
+   <section id="profilePanel" class="profile-panel hidden">
         <div class="profile-cover"></div>
         <div class="profile-info">
           <div class="profile-avatar" id="profileAvatar">TR</div>
