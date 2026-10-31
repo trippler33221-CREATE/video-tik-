@@ -6,17 +6,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <meta name="theme-color" content="#080810">
-  <meta name="description" content="V-Tik Pro - Discover, watch, create and share amazing short videos with creators around the world.">
-  <meta name="keywords" content="V-Tik, V-Tik Pro, short videos, video sharing, creators, entertainment">
+  <meta name="description" content="V-Tik Pro - Discover, watch and share amazing short videos.">
   <meta name="author" content="V-Tik">
 
-  <meta property="og:title" content="V-Tik Pro - Watch and Share Videos">
-  <meta property="og:description" content="Discover amazing videos and share your creativity with V-Tik.">
+  <meta property="og:title" content="V-Tik Pro">
+  <meta property="og:description" content="Discover, watch and share videos with V-Tik.">
   <meta property="og:type" content="website">
 
-  <title>V-Tik Pro | Discover, Watch & Share</title>
+  <title>V-Tik Pro — Short Videos</title>
 
-  <link rel="icon" type="image/png" href="Neon V-TIK Video Logo.png">
+  <link rel="icon" href="Neon V-TIK Video Logo.png">
   <link rel="apple-touch-icon" href="Neon V-TIK Video Logo.png">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -29,174 +28,106 @@
 
 <body>
 
-  <!-- ACCESSIBILITY -->
-  <a href="#videoFeed" class="skip-link">Skip to videos</a>
-
   <!-- HEADER -->
   <header class="topbar">
 
-    <a class="brand" href="index.html" aria-label="V-Tik home">
+    <a href="index.html" class="brand" aria-label="V-Tik home">
       <img
         src="Neon V-TIK Video Logo.png"
-        alt="V-Tik Logo"
+        alt="V-Tik"
         class="brand-logo"
       >
-      <span class="brand-name">V-<span>TIK</span><small> PRO</small></span>
+      <span class="brand-name">V-<span>TIK</span></span>
     </a>
 
     <!-- SEARCH -->
     <label class="search-wrap">
       <span aria-hidden="true">⌕</span>
+
       <input
-        id="searchInput"
         type="search"
-        placeholder="Search videos, creators..."
-        aria-label="Search videos and accounts"
+        id="searchInput"
+        placeholder="Search videos..."
         autocomplete="off"
+        aria-label="Search videos"
       >
-      <kbd>⌕</kbd>
+
+      <button
+        type="button"
+        id="clearSearch"
+        aria-label="Clear search"
+      >×</button>
     </label>
 
-    <!-- HEADER ACTIONS -->
+    <!-- HEADER BUTTONS -->
     <div class="top-actions">
 
       <button class="btn btn-light" id="createTop" type="button">
-        <span>＋</span> Create
+        ＋ Create
       </button>
 
       <a
+        href="accounts.html"
         class="avatar"
         id="headerAvatar"
-        href="accounts.html"
-        aria-label="Open your profile"
+        aria-label="Your profile"
       >TR</a>
 
     </div>
 
   </header>
 
+
   <!-- SIDEBAR -->
-  <aside class="sidebar" aria-label="Main navigation">
+  <aside class="sidebar">
 
     <div class="sidebar-menu">
 
-      <a class="side-link active" href="index.html" aria-current="page">
-        <span>⌂</span>
-        <span>For You</span>
-      </a>
+      <p class="sidebar-heading">EXPLORE</p>
 
-      <button class="side-link" id="discoverBtn" type="button">
+      <button class="side-link active" id="discoverBtn" type="button">
         <span>⌕</span>
         <span>Discover</span>
       </button>
 
-      <button class="side-link" id="openCreate" type="button">
-        <span>＋</span>
-        <span>Create video</span>
-      </button>
-
-      <a class="side-link" href="accounts.html">
-        <span>◉</span>
-        <span>My Profile</span>
-      </a>
-
-      <div class="side-divider"></div>
-
-      <p class="sidebar-heading">EXPLORE</p>
-
-      <a class="side-link" href="#videoFeed">
-        <span>▶</span>
-        <span>Trending Videos</span>
-      </a>
-
-      <button class="side-link" id="mobileDiscover" type="button">
-        <span>✦</span>
-        <span>Discover Creators</span>
-      </button>
-
-      <div class="side-divider"></div>
-
-      <p class="sidebar-heading">MORE</p>
-
-      <a class="side-link" href="about.html">
+      <a href="about.html" class="side-link">
         <span>ⓘ</span>
-        <span>About V-Tik</span>
+        <span>About</span>
       </a>
 
-      <a class="side-link" href="privacy.html">
+      <a href="privacy.html" class="side-link">
         <span>▤</span>
-        <span>Privacy Policy</span>
+        <span>Privacy</span>
       </a>
 
-      <a class="side-link" href="terms.html">
+      <a href="terms.html" class="side-link">
         <span>▧</span>
-        <span>Terms & Conditions</span>
+        <span>Terms</span>
       </a>
 
     </div>
 
     <div class="sidebar-footer">
-      <p>V-Tik Pro</p>
-      <small>© 2026 V-Tik. All rights reserved.</small>
+      <strong>V-Tik Pro</strong>
+      <small>© 2026 V-Tik</small>
       <small>Made for creators ❤️</small>
     </div>
 
   </aside>
 
+
   <!-- MAIN CONTENT -->
   <main class="main-content">
-
-    <!-- FEED HEADER -->
-    <section class="feed-heading">
-
-      <div>
-        <p class="eyebrow">YOUR WORLD OF ENTERTAINMENT</p>
-
-        <h1 id="feedTitle">
-          For You <span>✦</span>
-        </h1>
-
-        <p class="muted">
-          Discover amazing videos, meet creators and share your moments.
-        </p>
-      </div>
-
-      <div class="online-pill">
-        <i></i>
-        Explore V-Tik
-      </div>
-
-    </section>
-
-    <!-- VIDEO CATEGORY NAVIGATION -->
-    <nav class="video-tabs" aria-label="Video categories">
-
-      <button class="video-tab active" type="button">
-        For You
-      </button>
-
-      <button class="video-tab" type="button">
-        Following
-      </button>
-
-      <button class="video-tab" type="button">
-        Trending
-      </button>
-
-      <button class="video-tab" type="button">
-        Latest
-      </button>
-
-    </nav>
 
     <!-- VIDEO FEED -->
     <section
       id="videoFeed"
       class="video-feed"
-      aria-label="V-Tik video feed"
+      aria-label="Video feed"
       aria-live="polite"
       aria-busy="false"
     ></section>
+
 
     <!-- EMPTY STATE -->
     <section
@@ -210,22 +141,26 @@
       <h2>No videos found</h2>
 
       <p>
-        There are no videos to display right now.
-        Be the first to share something amazing!
+        Try another search or share your first video on V-Tik.
       </p>
 
-      <button class="btn btn-primary" id="emptyCreate" type="button">
-        ＋ Upload your first video
+      <button
+        class="btn btn-primary"
+        id="emptyCreate"
+        type="button"
+      >
+        ＋ Create Video
       </button>
 
     </section>
 
   </main>
 
-  <!-- MOBILE NAVIGATION -->
+
+  <!-- MOBILE BOTTOM NAVIGATION -->
   <nav class="mobile-nav" aria-label="Mobile navigation">
 
-    <a class="active" href="index.html" aria-current="page">
+    <a href="index.html" class="active">
       <b>⌂</b>
       <span>Home</span>
     </a>
@@ -241,8 +176,8 @@
     </button>
 
     <button id="mobileInbox" type="button">
-      <b>▱</b>
-      <span>Inbox</span>
+      <b>♧</b>
+      <span>Following</span>
     </button>
 
     <a href="accounts.html">
@@ -251,6 +186,7 @@
     </a>
 
   </nav>
+
 
   <!-- CREATE VIDEO MODAL -->
   <section
@@ -267,74 +203,71 @@
         class="close-modal"
         id="closeCreate"
         type="button"
-        aria-label="Close upload window"
+        aria-label="Close"
       >×</button>
 
       <div class="modal-logo">
-        <img src="Neon V-TIK Video Logo.png" alt="">
+        <img src="Neon V-TIK Video Logo.png" alt="V-Tik logo">
       </div>
 
-      <p class="eyebrow">CREATE SOMETHING AMAZING</p>
+      <p class="eyebrow">SHARE YOUR CREATIVITY</p>
 
       <h2 id="createTitle">Create on V-Tik</h2>
 
       <p class="muted">
-        Upload your video and share your creativity with the world.
+        Select a video from your device.
       </p>
 
-      <!-- FILE UPLOAD -->
-      <label class="upload-zone" for="videoFile">
+      <!-- UPLOAD -->
+      <label for="videoFile" class="upload-zone">
 
-        <span class="upload-icon">＋</span>
+        <span class="upload-icon">⇧</span>
 
-        <strong>Choose a video</strong>
+        <strong>Choose video</strong>
 
-        <small>MP4, WebM, Ogg or supported video formats</small>
+        <small>Select a video from your device.</small>
 
         <span class="btn btn-light">Browse Files</span>
 
       </label>
 
       <input
+        type="file"
         id="videoFile"
         name="videoFile"
-        type="file"
         accept="video/*"
         hidden
       >
 
-      <p id="selectedFile" class="selected-file" aria-live="polite">
+      <p id="selectedFile" class="selected-file">
         No video selected
       </p>
 
       <!-- CAPTION -->
-      <label class="field-label" for="videoCaption">
-        Video caption
+      <label for="videoCaption" class="field-label">
+        Caption
       </label>
 
       <textarea
         id="videoCaption"
         name="videoCaption"
-        maxlength="220"
         rows="3"
-        placeholder="What is happening in your video?"
+        maxlength="220"
+        placeholder="Write a caption..."
       ></textarea>
-
-      <p class="tiny-note">
-        Supported video uploads depend on your browser and storage setup.
-      </p>
 
       <button
         class="btn btn-primary full-width"
         id="postVideo"
         type="button"
       >
-        Post Video
+        Post video
       </button>
 
     </div>
 
   </section>
+
 
   <!-- COMMENTS MODAL -->
   <section
@@ -364,10 +297,6 @@
 
       <form id="commentForm" class="comment-form">
 
-        <label class="sr-only" for="commentInput">
-          Write a comment
-        </label>
-
         <input
           id="commentInput"
           name="comment"
@@ -375,6 +304,7 @@
           maxlength="300"
           placeholder="Add a comment..."
           autocomplete="off"
+          aria-label="Add a comment"
           required
         >
 
@@ -388,7 +318,8 @@
 
   </section>
 
-  <!-- TOAST NOTIFICATIONS -->
+
+  <!-- TOAST -->
   <div
     id="toast"
     class="toast hidden"
@@ -396,7 +327,8 @@
     aria-live="polite"
   ></div>
 
-  <!-- APP JAVASCRIPT -->
+
+  <!-- JAVASCRIPT -->
   <script src="app.js" defer></script>
 
 </body>
