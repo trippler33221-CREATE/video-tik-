@@ -23,16 +23,16 @@
 
         {
             id: "demo-1",
-            username: "flcreator",
-            displayName: "V-Tik creator",
+            username: "fik fameica",
+            displayName: "fik logogo ",
             caption: "Ranking the best F1 donuts! 🏎️🔥 #F1 #Formula1 #Motorsport",
             topic: "Trending",
             likes: 1300,
             comments: [],
-            views: "1.3K",
-            following: false,
-            liked: false,
-            saved: false,
+            views: "13K",
+            following: true,
+            liked: true,
+            saved: true,
             src: "fik logogo (1).mp4",
             demo: true
         },
@@ -49,7 +49,7 @@
             following: false,
             liked: false,
             saved: false,
-            src: "videos/music.mp4",
+            src: "fik logogo (1).mp4",
             demo: true
         },
 
@@ -65,7 +65,7 @@
             following: false,
             liked: false,
             saved: false,
-            src: "videos/gaming.mp4",
+            src: "fik logogo (1).mp4",
             demo: true
         },
 
@@ -81,7 +81,7 @@
             following: false,
             liked: false,
             saved: false,
-            src: "videos/trending.mp4",
+            src: "fik logogo (1).mp4",
             demo: true
         },
 
@@ -97,7 +97,7 @@
             following: false,
             liked: false,
             saved: false,
-            src: "videos/football.mp4",
+            src: "fik logogo (1).mp4",
             demo: true
         }
 
