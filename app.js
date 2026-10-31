@@ -155,109 +155,91 @@
     });
   }
 
-  // CREATE ONE VIDEO BOX
-  function makeCard(post) {
-    const card = document.createElement("article");
-    card.className = "video-card";
+ // CREATE ONE INDIVIDUAL VIDEO CARD
+function makeCard(post) {
+  const card = document.createElement("article");
+  card.className = "video-card";
 
-    const liked = read(LIKES_KEY, []).includes(post.id);
-    const saved = read(SAVES_KEY, []).includes(post.id);
+  const liked = read(LIKES_KEY, []).includes(post.id);
+  const saved = read(SAVES_KEY, []).includes(post.id);
+  const owner = currentUser().username === post.username;
 
-    const owner = currentUser().username === post.username;
-
-    card.innerHTML = `
-      <div class="video-main">
-
-        <div class="video-stage">
-          <video
-            src="${safeText(post.src)}"
-            playsinline
-            controls
-            preload="metadata"
-            ${post.poster ? `poster="${safeText(post.poster)}"` : ""}
-          ></video>
-
-          <div class="video-overlay">
-            <strong>@${safeText(post.username)}</strong>
-            <p>${safeText(post.caption)}</p>
-          </div>
-        </div>
-
-        <div class="video-author">
-          <div class="mini-avatar">
-            ${safeText(avatarText(post.displayName || post.username))}
-          </div>
-
-          <div>
-            <div class="author-name">
-              ${safeText(post.displayName || post.username)}
-            </div>
-            <div class="handle">@${safeText(post.username)}</div>
-          </div>
-
-          <button
-            class="follow-chip"
-            data-action="follow"
-            data-id="${safeText(post.id)}"
-          >＋ Follow</button>
-        </div>
-
+  card.innerHTML = `
+    <div class="video-card-header">
+      <div class="mini-avatar">
+        ${safeText(avatarText(post.displayName || post.username))}
       </div>
 
-      <div class="video-actions">
-
-        <button
-          class="action-btn ${liked ? "liked" : ""}"
-          data-action="like"
-          data-id="${safeText(post.id)}"
-        >
-          <span class="action-icon">${liked ? "♥" : "♡"}</span>
-          <span>${liked ? "Liked" : "Like"}</span>
-        </button>
-
-        <button
-          class="action-btn"
-          data-action="comment"
-          data-id="${safeText(post.id)}"
-        >
-          <span class="action-icon">☰</span>
-          <span>Comment</span>
-        </button>
-
-        <button
-          class="action-btn ${saved ? "liked" : ""}"
-          data-action="save"
-          data-id="${safeText(post.id)}"
-        >
-          <span class="action-icon">${saved ? "▣" : "▤"}</span>
-          <span>${saved ? "Saved" : "Save"}</span>
-        </button>
-
-        <button
-          class="action-btn"
-          data-action="share"
-          data-id="${safeText(post.id)}"
-        >
-          <span class="action-icon">↗</span>
-          <span>Share</span>
-        </button>
-
-        ${owner && !post.demo ? `
-          <button
-            class="action-btn"
-            data-action="delete"
-            data-id="${safeText(post.id)}"
-          >
-            <span class="action-icon">⋯</span>
-            <span>Delete</span>
-          </button>
-        ` : ""}
-
+      <div class="video-user-info">
+        <strong>${safeText(post.displayName || post.username)}</strong>
+        <span>@${safeText(post.username)}</span>
       </div>
-    `;
 
-    return card;
-  }
+      <button class="follow-chip"
+        data-action="follow"
+        data-id="${safeText(post.id)}">
+        + Follow
+      </button>
+    </div>
+
+    <div class="video-stage">
+      <video
+        src="${safeText(post.src)}"
+        playsinline
+        controls
+        preload="metadata"
+        ${post.poster ? `poster="${safeText(post.poster)}"` : ""}
+      ></video>
+    </div>
+
+    <div class="video-caption">
+      ${safeText(post.caption)}
+    </div>
+
+    <div class="video-actions">
+
+      <button class="action-btn ${liked ? "liked" : ""}"
+        data-action="like"
+        data-id="${safeText(post.id)}">
+        <span class="action-icon">${liked ? "♥" : "♡"}</span>
+        <span>${liked ? "Liked" : "Like"}</span>
+      </button>
+
+      <button class="action-btn"
+        data-action="comment"
+        data-id="${safeText(post.id)}">
+        <span class="action-icon">☰</span>
+        <span>Comment</span>
+      </button>
+
+      <button class="action-btn ${saved ? "liked" : ""}"
+        data-action="save"
+        data-id="${safeText(post.id)}">
+        <span class="action-icon">${saved ? "▣" : "▤"}</span>
+        <span>${saved ? "Saved" : "Save"}</span>
+      </button>
+
+      <button class="action-btn"
+        data-action="share"
+        data-id="${safeText(post.id)}">
+        <span class="action-icon">↗</span>
+        <span>Share</span>
+      </button>
+
+      ${owner && !post.demo ? `
+        <button class="action-btn"
+          data-action="delete"
+          data-id="${safeText(post.id)}">
+          <span class="action-icon">⋯</span>
+          <span>Delete</span>
+        </button>
+      ` : ""}
+
+    </div>
+  `;
+
+  return card;
+}
 
   // LIKE AND SAVE
   function toggleId(key, id) {
